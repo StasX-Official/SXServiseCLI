@@ -1,0 +1,31 @@
+{
+    "appName": "SXServiseCLI",
+    "version": "v5.2024",
+    "id": "SXSERVISECLIGLOBALFREE",
+    "com": "githab.sxservise.sxcomp.42web.io",
+   "author": "StasX",
+    "description": "SXServiseCLI - Beta version",
+    "license": "LICENSE.md",
+    "settings": {
+      "api": true,
+      "api_path": "api.sxcomp.42web.io/",
+      "logs": true,
+      "ai_support": true
+    },
+
+    "local_host":{
+      "default_port":8000,
+      "local_hosting_support":true,
+      "default_path":"localhostData"
+
+    },
+
+    "user_info":{
+      "CLI+":false,
+      "username":"",
+      "password":"",
+      "mail":""
+
+    }
+
+  }

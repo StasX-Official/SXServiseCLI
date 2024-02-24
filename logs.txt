@@ -1,0 +1,8 @@
+20:42:05 The login command is running
+21:02:48 The help command is running
+21:02:48 The -SXServiseCLI Info- command is running
+21:02:48 The exit command is running
+21:06:52 The localhost command is running
+19:26:28 The localhost command is running
+19:28:28 The localhost command is running
+20:11:41 The ai command is running
