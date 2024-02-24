@@ -4,7 +4,6 @@ def appdata():
     with open('sxserviseclidata.json') as f:
         data = json.load(f)  
 
-    # Дістаємо дані з JSON і записуємо в змінні
     app_name = data["appName"]
     version = data["version"]
     app_id = data["id"]
@@ -26,8 +25,6 @@ def appdata():
     
     
 
-    # Повертаємо змінні з даними
     return app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, username, password, mail, ai_support, local_default_port, local_hosting_support, local_default_path
 
-# Викликаємо функцію та отримуємо дані
 app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, username, password, mail, ai_support, local_default_port, local_hosting_support, local_default_path = appdata()
