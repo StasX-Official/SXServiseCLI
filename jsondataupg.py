@@ -19,12 +19,10 @@ def appdata():
     password = data["user_info"]["password"]
     mail = data["user_info"]["mail"]
     
+
     local_default_port = data["local_host"]["default_port"]
     local_hosting_support = data["local_host"]["local_hosting_support"]
     local_default_path = data["local_host"]["default_path"]
-    
-    
+    return app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, ai_support, local_default_port, local_hosting_support, local_default_path
 
-    return app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, username, password, mail, ai_support, local_default_port, local_hosting_support, local_default_path
-
-app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, username, password, mail, ai_support, local_default_port, local_hosting_support, local_default_path = appdata()
+app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, ai_support, local_default_port, local_hosting_support, local_default_path = appdata()
