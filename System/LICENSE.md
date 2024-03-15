@@ -1,6 +1,6 @@
 SOFTWARE LICENSE AGREEMENT
 
-Version: 2023.1
+Version: 2024.1
 
 This Software License Agreement ("Agreement") is granted by SXComp LLC ("Licensor") to the user ("Licensee") under the terms described below.
 
@@ -42,4 +42,4 @@ Thank you for choosing the "SXSERVISE CLI" software. We wish you success in usin
 
 Sincerely,
 The SXComp LLC Team
-Date: August 1, 2023
+Date: January 1, 2024
