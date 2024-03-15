@@ -6,3 +6,31 @@
 19:26:28 The localhost command is running
 19:28:28 The localhost command is running
 20:11:41 The ai command is running
+11:24:25 The login command is running
+20:41:33 - q
+17:30:47 The -SXServiseCLI Root- command is running
+17:30:47 The -SXServiseCLI Root- command is running
+17:32:58 The -SXServiseCLI Root- command is running
+17:32:58 The -SXServiseCLI Root- command is running
+17:34:06qUnknown command.
+17:34:06 Error code: 404. Unknown command.
+17:34:060Unknown command.
+17:34:06 Error code: 404. Unknown command.
+17:34:06 The -SXServiseCLI Root- command is running
+17:34:06sxservisecliUnknown command.
+17:34:06 Error code: 404. Unknown command.
+17:34:06 The localhost command is running
+11:07:54 The host command is running
+11:13:53 The host command is running
+11:20:52 The host command is running
+11:20:52 The host command is running
+15:41:12 The -SXServiseCLI CORE- command is running
+15:41:3023132Unknown command.
+15:41:30 Error code: 404. Unknown command.
+15:41:30 The -SXServiseCLI CORE- command is running
+15:47:19 The -SXServiseCLI CORE- command is running
+16:42:09cmdUnknown command.
+16:42:09 Error code: 404. Unknown command.
+16:42:09dirUnknown command.
+16:42:09 Error code: 404. Unknown command.
+16:42:09 The -SXServiseCLI CORE- command is running
