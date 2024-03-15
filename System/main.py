@@ -48,9 +48,9 @@ def save_error(file, time, error, code):
 
 global file
 file = open("logs.txt", "a")
+
 #Project developer: StasX
 #The project is under development
-#App version - v5.2024 + AI V0.10BETA
 #Copying the code is prohibited by SX copyright.
 
 def starting():
@@ -61,7 +61,7 @@ def starting():
             import sys
             import time
             cheak_tm += 20
-            time.sleep(0.002)
+            time.sleep(0.02)
             import qrcode
             import string
             cheak_tm += 20
@@ -90,7 +90,7 @@ sxserviseclilogo = Fore.GREEN + """
  ###  ##  ##  ###  ###  ##  # #      ### ###   #####     ###    ###  ##  # #               ##   ##  ###        ###
  #######  ##  ###  #######  #######  ### ###    ###    #######  #######  #######           #######  ######   #######
 """
-def start_all(app_name0, version0, app_id0, com0, author0, description0, license0, api_enabled0, api_path0, logs_enabled0, ai_support0, local_default_port0, local_hosting_support0, local_default_path0):
+def start_all(app_name0, version0, app_id0, com0, author0, description0, license0, api_enabled0, api_path0, logs_enabled0, ai_support0, local_default_port0, local_hosting_support0, local_default_path0, root_name0, root_pass0):
     
     init(autoreset=True)
     ModuleNotFoundError = "Plugin not found. Install the plugin on our website https://sxcomp.42web.io/ or contact SX technical support."
@@ -106,6 +106,12 @@ def start_all(app_name0, version0, app_id0, com0, author0, description0, license
     local_hosting_support = local_hosting_support0
     global local_default_path
     local_default_path = local_default_path0
+    
+
+    global root_name
+    root_name=root_name0
+    global root_pass
+    root_pass=root_pass0
     
     global ai_support
     ai_support=ai_support0
@@ -131,9 +137,7 @@ def start_all(app_name0, version0, app_id0, com0, author0, description0, license
     
     global my_app_id
     my_app_id = app_id
-    global app_com
-    app_com=com
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_com)    
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(com)    
 
     global app_ver
     app_ver=version
@@ -166,7 +170,261 @@ command13 = "dns"
 command14 = "host"
 command15 = "arduino"
 command16 = "ai"
-command17="sxscinf"
+command17 = "sxscinf"
+command18 = "root"
+command19 = "core"
+
+def core_command1():
+    print("-----=> SXServiseCLI Core MENU")
+    print("Continue - 1")
+    print("Exit - 0")
+    
+    def core_menu():
+        print(" ")
+        print("-SXSERVISECLI CORE MENU-")
+        print(" ")
+        print("/*/Settings - 2")
+        print("/*/Info - 1")
+        print("/*/Exit - 0")
+        print(" ")
+        def core_menu_c_auth(command):
+            if command==0:
+                input_command()
+            elif command == 1 :
+                pass
+            else:
+                print("ERROR. 404  Command Not Found.")
+                core_menu_c()
+                
+        def core_menu_c():
+            core_menu_inp=int(input(">>> "))
+            core_menu_c_auth(core_menu_inp)
+            
+        core_menu_c()
+        
+    def core_root_command_inp():
+        print("Core - SXServiseCLI2024")
+        print(" ")
+        print("-=> You will need root access to use it")
+        print(" ")
+        print("Continue - 0")
+        print("Exit - 1")
+        print(" ")
+        
+        def core_root_command_inp_command_auth(command0or1):
+            def core_root_command_error(error):
+                print("ERROR! ", error)
+                print("Restart? ")
+                print(" ")
+                print("Continue - 1")
+                print("Exit - 0")
+                print(" ")
+                
+                def core_root_command_error_input_auth(command):
+                    if command==1:
+                        core_root_command_inp()
+                    elif command==0:
+                        input_command()
+                    else:
+                        print("ERROR! Invalid Input")
+                        core_root_command_error_input()
+                    
+                def core_root_command_error_input():
+                    core_root_command_error_input_command=str(input(">>> "))
+                    core_root_command_error_input_auth(core_root_command_error_input_command)
+                    
+                core_root_command_error_input()
+            if command0or1==0:
+                def root_pass_core_command_check(root_name9,root_pass9):
+                    time.sleep(1)
+                    if logs_enabled==True:
+                        print("Logs enabled!")
+                        if root_name9==root_name:
+                            print("AUTH_LOGS: ROOT_NAME AUTH TRUE!")
+                            time.sleep(1)
+                            if root_pass9==root_pass:
+                                print("AUTH_LOGS: ROOT_PASS AUTH TRUE!")
+                                core_menu()
+                            else:
+                                print("AUTH_LOGS: ROOT_PASS AUTH FALSE!")
+                                core_root_command_error("ROOT PASSWORD WRONG")
+                        else:
+                            print("AUTH_LOGS: ROOT_NAME AUTH FALSE!")
+                            core_root_command_error("ROOT NAME WRONG")
+
+                
+                print(" ")
+                print("Enter ROOT_NAME...")
+                core_auth1_root_name=str(input(">>> "))
+                print("Enter ROOT_PASS...")
+                core_auth1_root_pass=str(input(">>> "))
+                root_pass_core_command_check(core_auth1_root_name, core_auth1_root_pass)
+            elif command0or1==1:
+                input_command()
+            else:
+                print("ERROR. 404. Command not found.")
+                print("0 - Continue, 1 - Exit... Enter 0 or 1...")
+                core_root_command_inp_command()
+
+        def core_root_command_inp_command():
+            core_root_command_inp_c=int(input(">>> "))
+            core_root_command_inp_command_auth(core_root_command_inp_c)
+            
+        core_root_command_inp_command()
+    
+    def auth_core_command_inp_auth(command0or1):
+        if command0or1==0:
+            input_command()
+        elif command0or1==1:
+            core_root_command_inp()
+        else:
+            print("ERROR. 404")
+            auth_core_command_inp()
+    
+    def auth_core_command_inp():
+        start_core_command_inp=int(input(">>> "))
+        auth_core_command_inp_auth(start_core_command_inp)
+    
+    auth_core_command_inp()
+import socket
+
+def host_command():
+    print("Host - SXServiseCLI2024")
+    print(" ")
+    print("-=> You will need root access to use it")
+    print(" ")
+    print("Continue - 0")
+    print("Exit - 1")
+    print(" ")
+    def auth():
+        continue_command=int(input(">>> "))
+        if continue_command==1:
+            input_command()
+        elif continue_command==0:
+            def root_auth1():
+                print("Enter ROOT_NAME")
+                root_name0=input(">>> ")
+                print("Enter ROOT_PASS")
+                root_pass0=input(">>> ")
+                host_root_auth_main(root_name0,root_pass0)
+            root_auth1()
+        else:
+            print("Error! 404. Invalid Num")
+            auth(">>> ")
+    
+    def host_root_auth_main(rootname,rootpass):
+        #logic
+        if rootname==root_name:
+            if logs_enabled==True:
+                print("AUTH-LOG: ROOT_NAME Valid")
+                time.sleep(1)
+                if  rootpass==root_pass:
+                    print("AUTH-LOG: ROOT_PASS Valid")
+                    if local_hosting_support==True:
+                        check_host_av_func()
+                    else:
+                        print("Host support - OFF")
+                        input_command()
+                else:
+                    print("AUTH-LOG: ROOT_PASS Invalid")
+                    q1ex="ROOT_PASS"
+                    error_lc_3(q1ex)
+                    
+            time.sleep(1)
+            if  rootpass==root_pass:
+                start_lchost_func_sxg()
+            else:
+                q1ex="ROOT_PASS"
+                error_lc_3(q1ex)
+
+        elif rootpass==root_pass:
+            if logs_enabled==True:
+                print("AUTH-LOG: ROOT_NAME Invalid")
+                time.sleep(1)
+                print("AUTH-LOG: ROOT_PASS Valid")
+                q2ex1="ROOT_NAME"
+                error_lc_3(q2ex1)
+            
+            time.sleep(1)
+            q2ex1="ROOT_NAME"
+            error_lc_3(q2ex1)
+                
+        else:
+            def error_lc_3(errorc):
+                print("ERROR: Incorrect information. ", errorc)
+                print("-=> Please try again")
+                print(" ")
+                print("Try again - 1")
+                print("Exit - 0")
+                print(" ")
+                global host_auth_main_truagain
+                host_auth_main_truagain=int(input(">>> "))
+                if host_auth_main_truagain==0:
+                    input_command()
+                elif host_auth_main_truagain==1:
+                    input_command()
+                else:
+                    print("Errot!  Wrong number")
+                    input_command()
+    auth()
+            
+def check_host_av_func():
+    print("-------------------------")
+    print("Host availability review")
+    print("-------------------------")
+    print("Run the check - 0")
+    print("exit - 1")
+    check_host_availability_command_input = int(input())
+    if check_host_availability_command_input == 0:
+        print("Enter host...")
+        host = input()
+        print("Enter port... Default 80")
+        port = int(input())
+        if check_host_availability(host, port):
+            print(f"{host}:{port} is reachable.")
+        else:
+            print(f"{host}:{port} is not reachable.")
+
+    elif check_host_availability_command_input == 1:
+        input_command()
+    else:
+        print("Not Found.")
+        check_host_av_func()
+
+
+def check_host_availability(host, port):
+    try:
+        socket.create_connection((host, port), timeout=5)
+        return True
+    except (socket.timeout, ConnectionError):
+        return False
+
+def root_menu():
+    print("Root Munu: ")
+    print("Root info - 1")
+    print("Exit - 0")
+    rootcommand=int(input(">>> "))
+    if rootcommand==1:
+        print(" ")
+        print("Root info...")
+        print("Show root information?  y/n")
+        def show_root_info():
+            print(" ")
+            q1=str(input(">>> "))
+            if q1=="y":
+                print("  SXSERVISECLI ROOT INFO:")
+                time.sleep(2)
+                print("/*/ - Root name - ", root_name, "SYSTEM: sxservisecli1")
+                print("/*/ - Root pass - ", root_pass, "SYSTEM: sxservisecli1")
+                print(" ")
+                input_command()
+            elif q1=="n":
+                input_command()
+            else:
+                show_root_info()
+        show_root_info()         
+    elif  rootcommand==0:
+        input_command()
 
 def command_sxscinf():
     print("SXServiseCLI Info:")
@@ -192,20 +450,21 @@ def command_help():
     print("/*/ help - Display this list of commands")
     print("/*/ login - Login to your account BETA")
     print("/*/ support - Contact technical support")
-    print("/*/ localhost - Manage local server")
+    print("/*/ localhost - Manage local server (BETA)")
     print("/*/ json - Manage JSON files")
     print("/*/ qrcode - Manage QR codes")
     print("/*/ exit - Exit the program")
     print("/*/ http - Connecting to web servers")
-    print("/*/ dns - DNS analysis")
+    print("/*/ dns - DNS analysis (BETA)")
     print("/*/ host - Checking the availability of hosts")
     print("/*/ sxscinf - Application information")
+    print("/*/ root - SXServiseCLI Root (BETA)")
+    print("/*/ core - SXServiseCLI Core Menu (BETA)")
     print("==========================================")
     print("App info:")
     print("SXServiseCLI Version: ", app_ver)
     print("AI Version: ", app_ai_ver)
     print("==========================================")
-    print("Difficult commands:")
     print(" ")
 
     input_command()
@@ -391,10 +650,103 @@ def start_lchost_func_sxg():
 
 
 def command_localhost():
+    print("LocalHost - SXServiseCLI2024")
+    print(" ")
+    print("-=> You will need root access to use it")
+    print(" ")
+    print("Continue - 0")
+    print("Exit - 1")
+    print(" ")
+    def localhost_root_auth_main(rootname,rootpass):
+        #logic
+        if rootname==root_name:
+            if logs_enabled==True:
+                print("AUTH-LOG: ROOT_NAME Valid")
+                time.sleep(1)
+                if  rootpass==root_pass:
+                    print("AUTH-LOG: ROOT_PASS Valid")
+                    if local_hosting_support==True:
+                        localhost_menu()
+                    else:
+                        print("Local Host support - OFF")
+                        input_command()
+                else:
+                    print("AUTH-LOG: ROOT_PASS Invalid")
+                    q1ex="ROOT_PASS"
+                    error_lc_3(q1ex)
+                    
+            time.sleep(1)
+            if  rootpass==root_pass:
+                start_lchost_func_sxg()
+            else:
+                q1ex="ROOT_PASS"
+                error_lc_3(q1ex)
+
+        elif rootpass==root_pass:
+            if logs_enabled==True:
+                print("AUTH-LOG: ROOT_NAME Invalid")
+                time.sleep(1)
+                print("AUTH-LOG: ROOT_PASS Valid")
+                q2ex1="ROOT_NAME"
+                error_lc_3(q2ex1)
+            
+            time.sleep(1)
+            q2ex1="ROOT_NAME"
+            error_lc_3(q2ex1)
+                
+        else:
+            def error_lc_3(errorc):
+                print("ERROR: Incorrect information. ", errorc)
+                print("-=> Please try again")
+                print(" ")
+                print("Try again - 1")
+                print("Exit - 0")
+                print(" ")
+                global localhost_auth_main_truagain
+                localhost_auth_main_truagain=int(input(">>> "))
+                localhost_auth_main_truagain_auth()
+                
+            def localhost_auth_main_truagain_auth():
+                if localhost_auth_main_truagain==1:
+                    command_localhost()
+                elif localhost_auth_main_truagain==0:
+                    input_command()
+                else:
+                    print("ERROR: Incorrect information. Please try again")
+                    print(" ")
+
+            rert="ROOT_NAME, ROOT_PASS"
+            error_lc_3(rert)
+                    
+                    
+    def localhost_root_auth():
+        r1=int(input(">>> "))
+        if r1==0:
+            print(" ")
+            print("Enter the root name...")
+            localhost_root_auth_name=str(input(">>> "))
+            print("Enter the root pass...")
+            localhost_root_auth_pass=str(input(">>> "))
+            print("Auth...")
+            localhost_root_auth_main(localhost_root_auth_name, localhost_root_auth_pass)
+        elif r1==1:
+            input_command()
+        else:
+            print("Error. Enter a numeric value (0-1)")
+            localhost_root_auth()
+    localhost_root_auth()
+        
+def localhost_menu():
     print("")
+    print("====================")
+    print("=====LocalHost======")
+    print("====================")
     print("Start localhost - 0")
     print("Stop localhost - 1")
     print("exit - 2") # taskkill /PID 8000
+    print("====================")
+    print("# taskkill /PID 8000")
+    print("====================")
     print("")
     localhostcommand = int(input(Fore.BLUE + "sxservise >>> "))
     if localhostcommand == 0:
@@ -466,9 +818,9 @@ def install_package(package_name):
     print("package - 1")
     command_install_pcg = int(input(Fore.BLUE + ">>> "))
     if command_install_pcg == 0:
-        0
+        pass
     elif command_install_pcg == 1:
-        0
+        pass
     else:
         print(Fore.RED + "Unknown command.")
         error("Error code: 404. Unknown command", 1)
@@ -502,7 +854,7 @@ def input_command():
     elif command == command4:
         text_to_write = f"{formatted_time} The localhost command is running\n"
         file.write(text_to_write)
-        start_lchost_func_sxg()
+        command_localhost()
     elif command == command5:
         text_to_write = f"{formatted_time} The json command is running\n"
         file.write(text_to_write)
@@ -540,7 +892,7 @@ def input_command():
     elif command == command14:
         text_to_write = f"{formatted_time} The host command is running\n"
         file.write(text_to_write)
-        from Local.func.hostav import check_host_av_func
+        host_command()
     elif command == command15:
         text_to_write = f"{formatted_time} The arduino command is running\n"
         file.write(text_to_write)
@@ -555,6 +907,14 @@ def input_command():
         text_to_write = f"{formatted_time} The -SXServiseCLI Info- command is running\n"
         file.write(text_to_write)
         command_sxscinf()
+    elif command == "root":
+        text_to_write = f"{formatted_time} The -SXServiseCLI Root- command is running\n"
+        file.write(text_to_write)
+        root_menu()  
+    elif command == command19:
+        text_to_write = f"{formatted_time} The -SXServiseCLI CORE- command is running\n"
+        file.write(text_to_write)
+        core_command1()
     else:
         print(Fore.RED + "Unknown command.")
         error("Error code: 404. Unknown command", 1)
@@ -563,3 +923,4 @@ def input_command():
         text_to_write = f"{formatted_time} Error code: 404. Unknown command.\n"
         file.write(text_to_write)
         input_command()
+    
