@@ -21,7 +21,6 @@
     },
 
     "user_info":{
-      "CLI+":false,
       "username":"",
       "password":"",
       "mail":""
