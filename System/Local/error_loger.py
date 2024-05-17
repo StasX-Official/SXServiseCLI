@@ -32,3 +32,4 @@ def save_error(file, time, error, code):
     auth2v = str(text_to_write)
     file.write(auth2v)
     file.close()
+#TEST
