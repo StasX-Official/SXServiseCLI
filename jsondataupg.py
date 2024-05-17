@@ -18,11 +18,14 @@ def appdata():
     username = data["user_info"]["username"]
     password = data["user_info"]["password"]
     mail = data["user_info"]["mail"]
+    sxservisecliPLUSuser = data["user_info"]["sxservisecliPLUS_user"]
+    user1name=data["user_info"]["username"]
+    user1mail=data["user_info"]["mail"]
     
 
     local_default_port = data["local_host"]["default_port"]
     local_hosting_support = data["local_host"]["local_hosting_support"]
     local_default_path = data["local_host"]["default_path"]
-    return app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, ai_support, local_default_port, local_hosting_support, local_default_path
+    return user1mail, user1name, sxservisecliPLUSuser,app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, ai_support, local_default_port, local_hosting_support, local_default_path
 
-app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, ai_support, local_default_port, local_hosting_support, local_default_path = appdata()
+user1mail, user1name, sxservisecliPLUSuser, app_name, version, app_id, com, author, description, license, api_enabled, api_path, logs_enabled, ai_support, local_default_port, local_hosting_support, local_default_path = appdata()
