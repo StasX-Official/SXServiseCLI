@@ -1,7 +1,7 @@
 import os
 global mods_dir_path
 mods_dir_path="Mods"
-
+#TEST - FOR TESTERS
 def scan_mods():
     mods = []
     try:
@@ -27,7 +27,7 @@ def mods_menu():
     
     if trt == "t":
         selected_mod = mods[fd]
-        # Тут можна додати код для запуску обраного модуля
+        #TEST
         print(f"Running the mod: {selected_mod}")
     elif trt == "f":
         print("Cancel launch...")
