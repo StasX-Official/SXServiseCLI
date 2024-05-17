@@ -10,6 +10,13 @@ from tqdm import tqdm
 from datetime import datetime
 from colorama import init, Fore, Back, Style
 import ctypes
+import qrcode
+import socketserver
+import socket
+
+current_timeQ12F = datetime.now()
+formatted_timeQ12F = current_timeQ12F.strftime("%H:%M:%S")
+fileQ12F = open("logs.txt", "a")
 
 def error(error, dep_code):
     main_error(error, dep_code)
@@ -49,9 +56,13 @@ def save_error(file, time, error, code):
 global file
 file = open("logs.txt", "a")
 
-#Project developer: StasX
-#The project is under development
+#Project developer: Kozosvyst Stas (StasX)
+#Devoper info: FullName: Kozosvyst Stas; Mail: stasx.official.xx@gmail.com; Google Dev Prof: https://g.dev/StasX; LinkedIn: https://www.linkedin.com/in/stas-kozosvyst-a73782279/ ;
+#The project is under development (BETA)
 #Copying the code is prohibited by SX copyright.
+#GitHub wiki page -> https://github.com/StasX-Official/SXServiseCLI/wiki
+#GitHub project page -> https://github.com/StasX-Official/SXServiseCLI
+#Thanks a lot for installing! - StasX.
 
 def starting():
     print("Cheking files...")
@@ -90,15 +101,26 @@ sxserviseclilogo = Fore.GREEN + """
  ###  ##  ##  ###  ###  ##  # #      ### ###   #####     ###    ###  ##  # #               ##   ##  ###        ###
  #######  ##  ###  #######  #######  ### ###    ###    #######  #######  #######           #######  ######   #######
 """
-def start_all(app_name0, version0, app_id0, com0, author0, description0, license0, api_enabled0, api_path0, logs_enabled0, ai_support0, local_default_port0, local_hosting_support0, local_default_path0, root_name0, root_pass0):
+def start_all(user1mail, user1name, sxservisecliPLUSuser0, app_name0, version0, app_id0, com0, author0, description0, license0, api_enabled0, api_path0, logs_enabled0, ai_support0, local_default_port0, local_hosting_support0, local_default_path0, root_name0, root_pass0):
+    
     
     init(autoreset=True)
+    from System.Local.sxg.core import core_main
+    print("STARTING CORS...")
+    core_main(1,0)
     ModuleNotFoundError = "Plugin not found. Install the plugin on our website https://sxcomp.42web.io/ or contact SX technical support."
     global current_time
     current_time = datetime.now()
     global formatted_time
     formatted_time = current_time.strftime("%H:%M:%S")
     icon_path = os.path.abspath("logo.ico")
+    
+    global username
+    username=user1name
+    global usermail
+    usermail=user1mail
+    global sxservisecliPLUS
+    sxservisecliPLUS = sxservisecliPLUSuser0
     
     global local_default_port
     local_default_port = local_default_port0
@@ -146,9 +168,14 @@ def start_all(app_name0, version0, app_id0, com0, author0, description0, license
     global logs1
     logs1=logs_enabled
     starting()
+    
+    #CORS STARTING
+    
+    
     print(sxserviseclilogo)
     print("Welcome to SXSERVISE CLI 2024!")
     print("Login to your account - login")
+    print("My tariff plan - plan")
     print(" ")
     input_command()
 
@@ -173,25 +200,87 @@ command16 = "ai"
 command17 = "sxscinf"
 command18 = "root"
 command19 = "core"
+command20 = "control"
+command21 = "plan"
 
+def sxservisecliTRPLAN():
+    print(" --> User card: ")
+    print(" - Auth:")
+    print(">UserName - "+username)
+    print(">UserMail - "+usermail)
+    print(" ")
+    print(" --> Plan: ")
+    print("SXServiseCLI+ -> "+str(sxservisecliPLUS))
+    input_command()
+
+def http_req_func():
+    print("-------------------------")
+    print("Connecting to web servers")
+    print("-------------------------")
+    print("Connect to server - 0")
+    print("exit - 1")
+    http_reg_funt_input_command = int(input())
+    if http_reg_funt_input_command == 0:
+        print("Enter server url...")
+        server_url_http_func_input = input()
+        url_to_request = server_url_http_func_input
+        response_data = http_request(url_to_request)
+        print(response_data)
+        input_command()
+    elif http_reg_funt_input_command == 1:
+        input_command()
+    else:
+        print("Not Found.")
+        input_command()
+
+def http_request(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return f"HTTP Error: {response.status_code}"
+    except requests.exceptions.RequestException:
+        return "Unable to connect to the server."
+
+def control_command():
+    time.sleep(0.5)
+    print("-> SXServiseCLI 2024")
+    print("Control panel: ")
+    print("Sorry, this ALFA command. This command will be available in the official release.")
+    input_command()
+    
 def core_command1():
     print("-----=> SXServiseCLI Core MENU")
     print("Continue - 1")
     print("Exit - 0")
+    
+    def core_status():
+        from System.Local.sxg.core import core_main
+        
+        servisecore_st = str(core_main(3,0))
+    
+        print("-----=> SXServiseCLI Core STATUS")
+        print("CORE:    STATUS: ")
+        print("Servise_CR - "+ servisecore_st)
+        print("Auth_CR - ")
+        print("LocalHost_CR - ")
+        print(" - - - - - - - - - - - - - - -")
+        print("True - STARTED, False - Stoped")
     
     def core_menu():
         print(" ")
         print("-SXSERVISECLI CORE MENU-")
         print(" ")
         print("/*/Settings - 2")
-        print("/*/Info - 1")
+        print("/*/Status - 1")
         print("/*/Exit - 0")
         print(" ")
         def core_menu_c_auth(command):
             if command==0:
                 input_command()
             elif command == 1 :
-                pass
+                core_status()
             else:
                 print("ERROR. 404  Command Not Found.")
                 core_menu_c()
@@ -286,7 +375,7 @@ def core_command1():
         auth_core_command_inp_auth(start_core_command_inp)
     
     auth_core_command_inp()
-import socket
+
 
 def host_command():
     print("Host - SXServiseCLI2024")
@@ -382,8 +471,10 @@ def check_host_av_func():
         port = int(input())
         if check_host_availability(host, port):
             print(f"{host}:{port} is reachable.")
+            input_command()
         else:
             print(f"{host}:{port} is not reachable.")
+            input_command()
 
     elif check_host_availability_command_input == 1:
         input_command()
@@ -398,7 +489,125 @@ def check_host_availability(host, port):
         return True
     except (socket.timeout, ConnectionError):
         return False
+    
 
+
+def create_qrcode():
+    print("Your text for the QR code:")
+    qrcodetextdata = input()
+    qrcodesizedataY = int(input("QR code cell size (default is 10): "))
+    qrcodesizedataX = int(input("Border width (default is 4): "))
+    
+    print("Creating your QR code...")
+    time.sleep(1)
+    
+    data = qrcodetextdata
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=qrcodesizedataY,
+        border=qrcodesizedataX,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    img_path = "qrcode.png"
+    img.save(img_path)
+    
+    print("QR code created successfully!")
+    os.startfile(img_path)
+    input_command()
+
+def command_qrcode_menu1():
+    print("-----------")
+    print(" -> QR-Code")
+    print("-----------")
+    print("/*/- Create - 0")
+    print("/*/-Edit Existing - 1")
+    print("/*/-Decode - 2")
+    print("/*/-Wi-Fi QR Code - 3")
+    print("/*/-Exit   - 4")
+    print("-----------")
+    command_qrcode23 = int(input(Fore.BLUE + ">>> "))
+    
+    if command_qrcode23 == 0:
+        create_qrcode()
+    elif command_qrcode23 == 1:
+        edit_qrcode()
+    elif command_qrcode23 == 2:
+        decode_qrcode()
+    elif command_qrcode23 == 3:
+        create_wifi_qrcode()
+    elif command_qrcode23 == 4:
+        text_to_write = f"{formatted_timeQ12F} The exit command is running\n"
+        file.write(text_to_write)
+        input_command()
+    else:
+        print(Fore.RED + "Unknown command.")
+        text_to_write = f"{formatted_timeQ12F} Error code: 404. Unknown command.\n"
+        file.write(text_to_write)
+        command_qrcode_menu1()
+
+    
+def edit_qrcode():
+    filename = input("Enter the filename of the QR code to edit: ")
+    
+    try:
+        with open(filename, "r") as qr_file:
+            qrcodetextdata = qr_file.readline().strip()
+        print("Editing QR code:", qrcodetextdata)
+        
+        new_text = input("Enter new text for the QR code: ")
+        
+        with open(filename, "w") as qr_file:
+            qr_file.write(new_text)
+        print("QR code updated successfully!")
+        input_command()
+        
+    except FileNotFoundError:
+        print(Fore.RED + "File not found." + Style.RESET_ALL)
+        input_command()
+
+def decode_qrcode():
+    print("Decode QR code:")
+    qrcode_image = input("Enter the filename of the QR code image: ")
+    
+    try:
+        img = qrcode.make(qrcode_image)
+        qr_data = img.data.decode("utf-8")
+        print("Decoded data:", qr_data)
+        input_command()
+    except FileNotFoundError:
+        print(Fore.RED + "File not found." + Style.RESET_ALL)
+        input_command()
+    except UnicodeDecodeError:
+        print(Fore.RED + "Error decoding QR code." + Style.RESET_ALL)
+        input_command()
+
+def create_wifi_qrcode():
+    ssid = input("Enter Wi-Fi SSID: ")
+    password = input("Enter Wi-Fi Password: ")
+    
+    wifi_qr_data = f"WIFI:S:{ssid};T:WPA;P:{password};;"
+    qrcodesizedataY = int(input("QR code cell size (default is 10): "))
+    qrcodesizedataX = int(input("Border width (default is 4): "))
+    
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=qrcodesizedataY,
+        border=qrcodesizedataX,
+    )
+    qr.add_data(wifi_qr_data)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    img_path = "wifi_qrcode.png"
+    img.save(img_path)
+    
+    print("Wi-Fi QR code created successfully!")
+    os.startfile(img_path)
+    input_command()
+    
 def root_menu():
     print("Root Munu: ")
     print("Root info - 1")
@@ -789,7 +998,6 @@ def stop_local_server():
     file.write(text_to_write)
     raise KeyboardInterrupt
 
-import socketserver
 
 def start_local_server(port, dir):
     port = port
@@ -862,11 +1070,11 @@ def input_command():
     elif command == command6:
         text_to_write = f"{formatted_time} The qrcode command is running\n"
         file.write(text_to_write)
-        from Local.func.qrcodefunc import command_qrcode_menu
+        command_qrcode_menu1()
     elif command == command7:
         text_to_write = f"{formatted_time} The qrcode command is running\n"
         file.write(text_to_write)
-        from Local.func.qrcodefunc import command_qrcode_menu
+        command_qrcode_menu1()
     elif command == command8:
         text_to_write = f"{formatted_time} The ping command is running\n"
         file.write(text_to_write)
@@ -880,15 +1088,15 @@ def input_command():
     elif command == command11:
         text_to_write = f"{formatted_time} The http command is running\n"
         file.write(text_to_write)
-        from Local.func.httpfunc import http_req_func
+        http_req_func()
     elif command == command12:
         text_to_write = f"{formatted_time} The https command is running\n"
         file.write(text_to_write)
-        from Local.func.httpfunc import http_req_func
+        http_req_func()
     elif command == command13:
         text_to_write = f"{formatted_time} The dns command is running\n"
         file.write(text_to_write)
-        from Local.func.dnsfunc import dns_lookup_func
+        check_host_av_func()
     elif command == command14:
         text_to_write = f"{formatted_time} The host command is running\n"
         file.write(text_to_write)
@@ -915,6 +1123,14 @@ def input_command():
         text_to_write = f"{formatted_time} The -SXServiseCLI CORE- command is running\n"
         file.write(text_to_write)
         core_command1()
+    elif command==command20:
+        text_to_write = f"{formatted_time} The CONTROL command is running\n"
+        file.write(text_to_write)
+        control_command()
+    elif command==command21:
+        text_to_write = f"{formatted_time} The PLAN command is running\n"
+        file.write(text_to_write)
+        sxservisecliTRPLAN()
     else:
         print(Fore.RED + "Unknown command.")
         error("Error code: 404. Unknown command", 1)
