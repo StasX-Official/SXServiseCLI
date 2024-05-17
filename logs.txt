@@ -34,3 +34,45 @@
 16:42:09dirUnknown command.
 16:42:09 Error code: 404. Unknown command.
 16:42:09 The -SXServiseCLI CORE- command is running
+22:45:24 The help command is running
+13:18:32 The login command is running
+13:18:32 helpUnknown command.
+13:18:32 Error code: 404. Unknown command.
+13:18:32 The help command is running
+13:18:32 The support command is running
+13:18:32 The exit command is running
+13:22:44 The dns command is running
+13:22:58sxcinfUnknown command.
+13:22:58 Error code: 404. Unknown command.
+13:22:58sxinfUnknown command.
+13:22:58 Error code: 404. Unknown command.
+13:22:58sxcinfUnknown command.
+13:22:58 Error code: 404. Unknown command.
+13:22:58 The help command is running
+13:22:58 The -SXServiseCLI Info- command is running
+13:22:58 The -SXServiseCLI Root- command is running
+13:22:58 The -SXServiseCLI Root- command is running
+13:22:58 The -SXServiseCLI CORE- command is running
+13:22:58 The -SXServiseCLI CORE- command is running
+13:25:57 The json command is running
+2024-05-01 13:26:09 The create_json command is running
+13:29:48 The host command is running
+13:30:16 The dns command is running
+13:33:39 The dns command is running
+13:33:53 The host command is running
+13:34:05 The http command is running
+13:34:18 The qrcode command is running
+13:36:37 The qrcode command is running
+13:37:26 The qrcode command is running
+13:39:33 The qrcode command is running
+13:40:36 The qrcode command is running
+13:47:32 The qrcode command is running
+13:50:48 The qrcode command is running
+14:02:01 The http command is running
+20:04:34corsUnknown command.
+20:04:34 Error code: 404. Unknown command.
+20:04:34corUnknown command.
+20:04:34 Error code: 404. Unknown command.
+20:04:34 The -SXServiseCLI CORE- command is running
+20:13:45 The -SXServiseCLI CORE- command is running
+17:58:56 The PLAN command is running
