@@ -212,7 +212,6 @@ def uk_version_st():
                         print("╔╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╕")
                         print("╟ UserName - "+user0_name+"╢")
                         print("╟ UserMail - "+user0_mail+"╢")
-                        print("╟ UserPassword - "+user0_password+"╢")
                         print("╚╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╛")
                         print("""
                               Етап 3.5! Перевірка інформації.
