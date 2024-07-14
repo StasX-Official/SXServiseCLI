@@ -41,5 +41,5 @@ This license takes effect upon the purchase of the "SXSERVISE CLI" software by S
 Thank you for choosing the "SXSERVISE CLI" software. We wish you success in using and developing your application on the SX platform!
 
 Sincerely,
-The SXComp LLC Team
+StasX and SX.
 Date: January 1, 2024
