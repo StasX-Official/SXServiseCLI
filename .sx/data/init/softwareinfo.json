@@ -1,0 +1,41 @@
+{
+    "init":{
+        "APPNAME": "SXSERVISECLI2024",
+        "id": "SXSERVISECLIGLOBALFREE",
+        "com": "github.sxservise.sxcomp.42web.io",
+        "author": "StasX",
+        "description": "SXServiseCLI - Beta version"
+    },
+
+    "sxservises-init":{
+        "monetization":{
+            "sxmonetization": false,
+            "sxadsSUPPORT": false,
+            "sxapptype": "1"
+        },
+
+        "api":{
+            "sxservisesapi-analytics": false,
+            "sxservisesapi-authentication": true, 
+            "sxservisesapi-dataProcessing": true, 
+            "sxservisesapi-ai": true, 
+            "sxservisesapi-errors": true, 
+            "sxservisesapi-type-devapp": true
+        },
+
+        "owner-information":{
+            "OwnerName": "StasX",
+            "OwnerMail": "sxservise@outlook.com",
+            "ProjectID": "X4524-5645-23",
+            "ProjectSXSC": true,
+            "IninCMP": true
+        }
+    },
+
+
+    "Initialization_bot":{
+        "InitializationStatus": true,
+        "InitializationID": 1029281439,
+        "bot": "AFIN-3"
+    }
+ }
