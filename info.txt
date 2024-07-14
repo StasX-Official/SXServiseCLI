@@ -1,9 +1,33 @@
 ===========================
          LICENSE
 License - System/LICENSE.md
+License - MIT
+Copyright - StasX and SX
+==========================
+Windows:
+Українська:
+	Як запустити?
+	1 - first_start.cmd - Перший запуск додатку
+	2 - run.cmd - Запуск додатку (Завжди)
+English:
+	How to launch?
+	 1 - first_start.cmd - The first start of the application
+	 2 - run.cmd - Start the application (Always)
+- - - - - - - - - - - - - - - - - - - - - - -
+Linux:
+Українська:
+	Як запустити?
+	1 - first_app_start.py - Перший запуск додатку
+	2 - SXServiseCLI.py - Запуск додатку (Завжди)
+English:
+	How to launch?
+	 1 - first_app_start.py - The first start of the application
+	 2 - SXServiseCLI.py - Start the application (Always)
+
 ===========================
      FREE GITHUB VERS
 ===========================
-By StasX
+By StasX and SX
 ===========================
-^-^
+@SXServiseCLI2024
+@sxcomp.42web.io AND StasX
