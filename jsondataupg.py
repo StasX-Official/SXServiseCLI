@@ -1,9 +1,7 @@
 import json
-
 def appdata():
     with open('sxserviseclidata.json') as f:
         data = json.load(f)  
-
     app_name = data["appName"]
     version = data["version"]
     app_id = data["id"]
@@ -18,11 +16,9 @@ def appdata():
     username = data["user_info"]["username"]
     password = data["user_info"]["password"]
     mail = data["user_info"]["mail"]
-    sxservisecliPLUSuser = data["user_info"]["sxservisecliPLUS_user"]
+    sxservisecliPLUSuser = data["user_info"]["sxservisecliPlan_user"]
     user1name=data["user_info"]["username"]
     user1mail=data["user_info"]["mail"]
-    
-
     local_default_port = data["local_host"]["default_port"]
     local_hosting_support = data["local_host"]["local_hosting_support"]
     local_default_path = data["local_host"]["default_path"]
