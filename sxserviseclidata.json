@@ -1,6 +1,6 @@
 {
     "appName": "SXServiseCLI",
-    "version": "v6.2024",
+    "version": "v6.4.2024",
     "id": "SXSERVISECLIGLOBALFREE",
     "com": "github.sxservise.sxcomp.42web.io",
     "author": "StasX",
@@ -8,27 +8,22 @@
     "license": "LICENSE.md",
     "license2": "MIT",
     "settings": {
-      "api": true,
-      "api_path": "api.sxcomp.42web.io/",
-      "logs": true,
-      "ai_support": true,
-      "AuthAPI": true,
-      "ServisesAPI": true
+        "api": true,
+        "api_path": "api.sxcomp.42web.io/",
+        "logs": true,
+        "ai_support": true,
+        "AuthAPI": true,
+        "ServisesAPI": true
     },
-
-    "local_host":{
-      "default_port":8000,
-      "local_hosting_support":true,
-      "default_path":"localhostData"
-
+    "local_host": {
+        "default_port": 8000,
+        "local_hosting_support": true,
+        "default_path": "localhostData"
     },
-
-    "user_info":{
-      "sxservisecliPLUS_user": true,
-      "username":"sxservisecli1",
-      "password":"sxservisecli1",
-      "mail":"x"
-
-    } 
-
-  }
+    "user_info": {
+        "sxservisecliPlan_user": "x",
+        "username": "x",
+        "password": "x",
+        "mail": "x"
+    }
+}
