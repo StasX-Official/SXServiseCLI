@@ -1,9 +1,7 @@
-
 import tqdm
 import time
 import json
 import requests
-import json
 import subprocess
 import os
 from tqdm import tqdm
@@ -13,6 +11,7 @@ import ctypes
 import qrcode
 import socketserver
 import socket
+from plyer import notification
 
 current_timeQ12F = datetime.now()
 formatted_timeQ12F = current_timeQ12F.strftime("%H:%M:%S")
@@ -45,6 +44,38 @@ def main_error(error_sxg, code):
         code_sys_erro = "ERROR_AUTH"
         save_error(file, formatted_time, erro_code_auth, code_sys_erro)
 
+def notification_mess(title_m, message_c):
+    if user_tlc_plan=="FREE":
+        notification.notify(
+            title=title_m,
+            message=message_c,
+            app_name="SXServiseCLI2024",
+            timeout=1
+        )
+        return True
+    elif user_tlc_plan=="PLUS":
+        notification.notify(
+            title=title_m,
+            message=message_c,
+            app_name="SXServiseCLI2024+",
+            timeout=1
+        )
+        return True
+    elif user_tlc_plan=="PRO":
+        notification.notify(
+            title=title_m,
+            message=message_c,
+            app_name="SXServiseCLI2024-PRO",
+            timeout=1
+        )
+        return True
+    else:
+        notification.notify(
+            title=title_m,
+            message=message_c,
+            app_name="SXServiseCLI2024",
+            timeout=1
+        )
 
 def save_error(file, time, error, code):
     print(time, "SXG - ", error, code)
@@ -101,14 +132,82 @@ sxserviseclilogo = Fore.GREEN + """
  ###  ##  ##  ###  ###  ##  # #      ### ###   #####     ###    ###  ##  # #               ##   ##  ###        ###
  #######  ##  ###  #######  #######  ### ###    ###    #######  #######  #######           #######  ######   #######
 """
+
+
 def start_all(user1mail, user1name, sxservisecliPLUSuser0, app_name0, version0, app_id0, com0, author0, description0, license0, api_enabled0, api_path0, logs_enabled0, ai_support0, local_default_port0, local_hosting_support0, local_default_path0, root_name0, root_pass0):
-    
-    
+    global user_lc
+    user_lc=sxservisecliPLUSuser0
+    class sxservisecli2024:
+        class Cache:
+            def cache_clear(self, cache_folder_name):
+                pass
+        
+            def cache_save_txt(self, path_to_save, cache_info_txt):
+                pass
+        
+
+            def cache_delete(self):
+                pass
+            
+        class send:
+            def command(self):
+                pass
+            
+            def command_to_core(self):
+                pass
+            
+            def command_with_root(self,command):
+                pass
+        
+        class install:
+            def mods(self):
+                pass
+            
+        
+        class init:
+            def mode(self):
+                pass
+            
+            def dlc__init(self):
+                global dlc_path
+                global dlc_sxservisecli2024withAI_path
+                dlc_path="System/dlc"
+                dlc_sxservisecli2024withAI_path="/sxservisecliDLCAI"
+                
+                
+            
+            def dlc(self):
+                pass
+            
+            class auth:
+                def registration(self):
+                    pass
+                
+                def authorization(self):
+                    pass
+        
+        def start(self):
+            pass
+        
+        def restart(self):
+            pass
+        
+        def stop(self):
+            pass
+        
     init(autoreset=True)
     from System.Local.sxg.core import core_main
-    print("STARTING CORS...")
-    core_main(1,0)
+    print("STARTING CORS..."+ str(core_main(1,0)))
     ModuleNotFoundError = "Plugin not found. Install the plugin on our website https://sxcomp.42web.io/ or contact SX technical support."
+    
+    global logo_sxservisecli_free_path
+    global logo_sxservisecli_plus_path    
+    global logo_sxservisecli_pro_path
+    global logo_sx_path
+    logo_sxservisecli_free_path="img/logo/sxservisecli2024logo.png" 
+    logo_sxservisecli_plus_path="img/logo/sxservisecli2024pluslogo.png" 
+    logo_sxservisecli_pro_path="img/logo/sxservisecli2024prologo.png" 
+    logo_sx_path="img/logo/sxlogo.png"
     global current_time
     current_time = datetime.now()
     global formatted_time
@@ -129,7 +228,10 @@ def start_all(user1mail, user1name, sxservisecliPLUSuser0, app_name0, version0, 
     global local_default_path
     local_default_path = local_default_path0
     
-
+    global user_tlc_plan
+    user_tlc_planX=sxservisecliPLUS
+    
+        
     global root_name
     root_name=root_name0
     global root_pass
@@ -170,12 +272,31 @@ def start_all(user1mail, user1name, sxservisecliPLUSuser0, app_name0, version0, 
     starting()
     
     #CORS STARTING
-    
-    
     print(sxserviseclilogo)
-    print("Welcome to SXSERVISE CLI 2024!")
-    print("Login to your account - login")
-    print("My tariff plan - plan")
+    global user_tlc_plan
+    if user_tlc_planX=="user_subsc=FREE":
+        user_tlc_plan="FREE"
+    elif user_tlc_planX=="user_subsc=ERROR":
+        user_tlc_plan="ERROR"
+    elif user_tlc_planX=="user_subsc=PLUS":
+        user_tlc_plan="PLUS"
+    elif user_tlc_planX=="user_tlc_plan=PRO":
+        user_tlc_plan=="PRO"
+    elif user_tlc_planX=="x":
+        print("  ")
+        print(Fore.GREEN +"AUTH_ERROR:")
+        print(Fore.RED +"   - UA: Ой, ви ще не зарегістровані й не можете поки використовувати додаток...")
+        print(Fore.RED +"   - UA: Запустіть: first_start.cmd (WINDOWS) або first_app_start.py (Other)")
+        print(" ")
+        print(Fore.RED +"   - ENG: Oops, you`re not registered yet and cant`t use the app yet...")
+        print(Fore.RED +"   - ENG: Run: first_start.cmd (WINDOWS) or first_app_start.py (Other)")
+        time.sleep(5)
+        exit()
+        
+    print(f"Welcome {username}!")
+    print("Do you need help? - help")
+    print(f"Profile - plan")
+
     print(" ")
     input_command()
 
@@ -202,15 +323,18 @@ command18 = "root"
 command19 = "core"
 command20 = "control"
 command21 = "plan"
+command22 = "+"
+
+def activate_licension_key():
+    pass
 
 def sxservisecliTRPLAN():
     print(" --> User card: ")
-    print(" - Auth:")
-    print(">UserName - "+username)
-    print(">UserMail - "+usermail)
-    print(" ")
-    print(" --> Plan: ")
-    print("SXServiseCLI+ -> "+str(sxservisecliPLUS))
+    print("     >Name - "+str(username))
+    print("     >Mail - "+str(usermail))
+    print("     >Status -> "+str(user_lc))
+    print("     >Balance - > X $")
+    print("SXServiseCLI2024 - BETA")
     input_command()
 
 def http_req_func():
@@ -245,9 +369,37 @@ def http_request(url):
 
 def control_command():
     time.sleep(0.5)
-    print("-> SXServiseCLI 2024")
-    print("Control panel: ")
-    print("Sorry, this ALFA command. This command will be available in the official release.")
+    print("SXServiseCLI 2024 - CONTROL")
+    x=f"""
+Settings-Control:
+ >Global info:
+ - logs -> {logs_enabled}
+ - api  -> {api_enabled}
+ - ai   -> {ai_support}
+ 
+ >LocalHost info:
+ - LocalHost support -> {local_hosting_support}
+ - default port      -> {local_default_port}
+ - default path      -> {local_default_path} 
+ 
+ >SXServiseCLI info:
+ - Version    -> {app_ver}
+ - AI-Version -> {app_ai_ver}
+ - ID         -> {app_id}
+ - com        -> {com}
+ 
+ >Passwords:
+ - Root name -> *****
+ - Root password -> *****
+ 
+ >Control-menu info:
+ - Control-Version -> v0.2.1
+ - Control-Id -> SXSERVISECI2024SXCOMP-SX-APP-ID-OFFICIAL-SXSCLI-CONTR:4204
+ 
+ >Developer mode -> False (Soon)
+ >Testing mode -> False (Soon)
+"""
+    print(x)
     input_command()
     
 def core_command1():
@@ -637,38 +789,47 @@ def root_menu():
 
 def command_sxscinf():
     print("SXServiseCLI Info:")
-    print("Global info: ")
-    print(" /=/Author: ", author)
-    print(" /=/Version: ", app_ver)
-    print(" /=/Com: ", com)
-    print(" /=/Id: ", app_id)
-    print("Machine learning:")
-    print(" /=/AI Support: ", ai_support)
-    print(" /=/AI Version: ", app_ai_ver)
-    print("API:")
-    print(" /=/API Support: ", api_enabled)
-    print(" /=/API Path: ", api_path)
-    print("Local Host:")
-    print(" /=/default_port:", local_default_port)
-    print(" /=/local hosting support: ", local_hosting_support)
-    print(" /=/Default path: ", local_default_path)
+    print(">Global info: ")
+    print("    /=/Author: ", author)
+    print("    /=/Version: ", app_ver)
+    print("    /=/Com: ", com)
+    print("    /=/Id: ", app_id)
+    print(">Machine learning:")
+    print("    /=/AI Support: ", ai_support)
+    print("    /=/AI Version: ", app_ai_ver)
+    print(">API:")
+    print("    /=/API Support: ", api_enabled)
+    print("    /=/API Path: ", api_path)
+    print(">Local Host:")
+    print("    /=/default_port:", local_default_port)
+    print("    /=/local hosting support: ", local_hosting_support)
+    print("    /=/Default path: ", local_default_path)
     input_command()
     
 def command_help():
     print("Command list:")
-    print("/*/ help - Display this list of commands")
-    print("/*/ login - Login to your account BETA")
-    print("/*/ support - Contact technical support")
-    print("/*/ localhost - Manage local server (BETA)")
-    print("/*/ json - Manage JSON files")
-    print("/*/ qrcode - Manage QR codes")
-    print("/*/ exit - Exit the program")
-    print("/*/ http - Connecting to web servers")
-    print("/*/ dns - DNS analysis (BETA)")
-    print("/*/ host - Checking the availability of hosts")
-    print("/*/ sxscinf - Application information")
-    print("/*/ root - SXServiseCLI Root (BETA)")
-    print("/*/ core - SXServiseCLI Core Menu (BETA)")
+    print("     /*/ help - Display this list of commands")
+    print("     /*/ support - Contact technical support")
+    print("     /*/ localhost - Manage local server")
+    print("     /*/ json - Manage JSON files")
+    print("     /*/ qrcode - Manage QR codes")
+    print("     /*/ exit - Exit the program")
+    print("     /*/ http - Connecting to web servers")
+    print("     /*/ host - Checking the availability of hosts")
+    print("     /*/ sxscinf - Application information")
+    print("     /*/ dns - DNS analysis (BETA)")
+    print("     /*/ root - SXServiseCLI Root (BETA)")
+    print("     /*/ core - SXServiseCLI Core Menu (BETA)")
+    print("Soon...")
+    print("     /*/ ipinfo - Get all ip info (SOON)")
+    print("     /*/ crypto - Menu. SXServiseCLI crypto func (SOON)")
+    print("     /*/ DLC-control - Get dlc control panel (SOON)")
+    print("     /*/ Mods-control - Get mods control panel (SOON)")
+    print("     /*/ create-ai - Create AI  (SOON)")
+    print("     /*/ addons - Get system addons panel (SOON)")
+    print("     /*/ api-create - Create API only python* (SOON)")
+    print("     /*/ api-test - Test API (SOON)")
+    print("     /*/ add-sxscli2024-to-my-app - Get SXServiseCLI2024 for your app (SOON)")
     print("==========================================")
     print("App info:")
     print("SXServiseCLI Version: ", app_ver)
@@ -729,8 +890,7 @@ def login_CL_sxg():
         
 def register_ac_sxg():
     import webbrowser
-    url = "https://sxservise.web.app"
-    webbrowser.open(url)
+    webbrowser.open("https://sxservise.web.app")
     input_command()
 
 def select_ip():
@@ -805,11 +965,12 @@ def command_json_menu():
     print("-----------------")
     print("----json-menu----")
     print("-----------------")
-    print("Create json - 0")
-    print("Read json - 1")
-    print("Check JSON validity - 2")
-    print("Sort JSON data - 3")
-    print("Exit - 4")
+    print("    >Create json - 0")
+    print("    >Read json - 1")
+    print("    >Check JSON validity - 2")
+    print("    >Sort JSON data - 3")
+    print("    >Exit - 4")
+    print("Enter command:")
 
     jsonmenucommand = int(input())
     formatted_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -1131,6 +1292,10 @@ def input_command():
         text_to_write = f"{formatted_time} The PLAN command is running\n"
         file.write(text_to_write)
         sxservisecliTRPLAN()
+    elif command==command22:
+        text_to_write = f"{formatted_time} The ActivateLic command is running/n"
+        file.write(text_to_write)
+        activate_licension_key()
     else:
         print(Fore.RED + "Unknown command.")
         error("Error code: 404. Unknown command", 1)
@@ -1139,4 +1304,4 @@ def input_command():
         text_to_write = f"{formatted_time} Error code: 404. Unknown command.\n"
         file.write(text_to_write)
         input_command()
-    
+
