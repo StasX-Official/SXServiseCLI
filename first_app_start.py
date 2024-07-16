@@ -1,4 +1,8 @@
 import time
+import hashlib
+def encrypt_info(data):
+    hashed_info = hashlib.sha256(data.encode()).hexdigest()
+    return hashed_info
 print("""
                         SXSERVISECLI2024
       УКРАЇНСЬКА:
@@ -121,12 +125,13 @@ def uk_version_st():
                         user_mail=user0_mail
                         user_name=user0_name
                         user_pass=user0_password
+                        encrypted_password = encrypt_info(user_pass)
                         
                         import json
                         with open('sxserviseclidata.json', 'r') as r:
                             data = json.load(r)
                         data["user_info"]["username"] = user_name
-                        data["user_info"]["password"] = user_pass
+                        data["user_info"]["password"] = encrypted_password
                         data["user_info"]["mail"] = user_mail
                         data["user_info"]["sxservisecliPlan_user"]="FREE"
                         print("1/2 TRUE")
