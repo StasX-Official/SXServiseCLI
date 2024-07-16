@@ -1,3 +1,4 @@
+
 import tqdm
 import time
 import json
@@ -94,32 +95,43 @@ file = open("logs.txt", "a")
 #GitHub wiki page -> https://github.com/StasX-Official/SXServiseCLI/wiki
 #GitHub project page -> https://github.com/StasX-Official/SXServiseCLI
 #Thanks a lot for installing! - StasX.
-
+        
 def starting():
     print("Cheking files...")
-    cheak_tm = 0    
-    if cheak_tm < 100:
-        for _ in tqdm(range(100)):
-            import sys
-            import time
-            cheak_tm += 20
-            time.sleep(0.02)
-            import qrcode
-            import string
-            cheak_tm += 20
-            time.sleep(0.002)
-            import random
-            import requests
-            cheak_tm += 20
-            time.sleep(0.002)
-            import platform
-            import subprocess
-            cheak_tm += 20
-            time.sleep(0.002)
-            import http.server
-            import socketserver
-            cheak_tm += 20
-            time.sleep(0.002)
+    check_list = [
+        ("System/img", "Папку img"),
+        ("System/dlc", "Папку dlc"),
+        ("System/Local", "Папку Local"),
+        ("System/cache", "Папку cache"),
+        ("System/LocalHostData", "Папку LocalHostData"),
+        ("System/Mods", "Папку Mods"),
+        (".sx", "Папку .sx"),
+        (".idea", "Папку .idea"),
+        (".vscode", "Папку .vscode"),
+        ("System/cmdstorage.py", "Файл cmdstorage.py"),
+        ("System/mod_launcher_sxservisecli.py", "Файл mod_launcher_sxservisecli.py"),
+        ("addons_system.py", "Файл addons_system.py"),
+        ("api_system.py", "Файл api_system.py"),
+        ("error_logs.txt", "Файл error_logs.txt"),
+        ("first_app_start.py", "Файл first_app_start.py"),
+        ("first_start.cmd", "Файл first_start.cmd"),
+        ("info.txt", "Файл info.txt"),
+        ("run.cmd", "Файл run.cmd"),
+        ("first_start.cmd", "Файл first_start.cmd")
+    ]
+    
+    for item, name in tqdm(check_list, desc="Progress"):
+        if os.path.isdir(item):
+            fsdfsdfsdf=0
+            time.sleep(0.1)
+        elif os.path.isfile(item):
+            fsdfsdfsdf=0
+            time.sleep(0.1)
+        else:
+            print(Fore.RED + f"{name} не знайденно.")
+            time.sleep(4)
+            exit()
+    
      
 
 
@@ -134,7 +146,11 @@ sxserviseclilogo = Fore.GREEN + """
 """
 
 
-def start_all(user1mail, user1name, sxservisecliPLUSuser0, app_name0, version0, app_id0, com0, author0, description0, license0, api_enabled0, api_path0, logs_enabled0, ai_support0, local_default_port0, local_hosting_support0, local_default_path0, root_name0, root_pass0):
+def start_all(user1mail, user1name, sxservisecliPLUSuser0, app_name0, version0, app_id0, com0, author0, description0, license0, api_enabled0, api_path0, logs_enabled0, ai_support0, local_default_port0, local_hosting_support0, local_default_path0, root_name0, root_pass0, addon_data, api_data):
+    global addons_data
+    addons_data=addon_data
+    global apidata
+    apidata=api_data
     global user_lc
     user_lc=sxservisecliPLUSuser0
     class sxservisecli2024:
@@ -1304,4 +1320,3 @@ def input_command():
         text_to_write = f"{formatted_time} Error code: 404. Unknown command.\n"
         file.write(text_to_write)
         input_command()
-
