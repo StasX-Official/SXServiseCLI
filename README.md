@@ -12,6 +12,11 @@
 - Usage rules:
    - Allowed: Installation, use for your own purposes, use for commerce (Requires our permission and registration), distribution of the official site, modification (Creating your own add-ons and mods), publication of modifications (You take responsibility for breaking the rules).
    - Not allowed: Use the app for illegal activities, distribution of unofficial copies of the application, modification of the main file and the kernel, creation of illegal modifications, etc.
+
+Links:
+  - Official Site - https://www.sxcomp.42web.io/p/SXServiseCLI
+  - Official Telegram community - https://t.me/sxservisecli
+  - Wiki - https://github.com/StasX-Official/SXServiseCLI/wiki
   
 Copyright:
   - Our app is open source and free so we are not responsible for your copyright infringement but you can submit a request and we will clean it up.
