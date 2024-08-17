@@ -1,5 +1,10 @@
 **SXServiseCLI 2024 -  is a powerful and versatile command-line tool that helps you run local services, generate JSON files, create QR codes, test APIs, SSH, FTP, and much more.**
 -- 
+
+SHOP:
+ - Buy PRO - https://ko-fi.com/s/64ee8881ee
+ - Buy PLUS - https://ko-fi.com/s/dce39bdf69
+
 Key Features:
  - Local Server Management: Easily manage your local servers with simple commands.
  - Network and Port Scanning: Perform network and port scans to enhance your security.
