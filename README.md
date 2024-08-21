@@ -65,4 +65,4 @@ Copyright:
  - All copyrights belong to the main developer, Kozosvyst Stas (StasX).
  - We are not responsible for your actions.
  - We may make changes to the rules and policies.
- - Copyright (c) 2024 StasX and SX.
+ - © 2023-2024 StasX. All rights reserved.
