@@ -56,6 +56,14 @@ Links:
   - Official Telegram Community - https://t.me/sxservisecli
   - Wiki - https://github.com/StasX-Official/SXServiseCLI/wiki
 
+Docs:
+  - Copyright: https://www.sxcomp.42web.io/p/SXServiseCLI/copyright.txt
+  - Support Policy: https://www.sxcomp.42web.io/p/SXServiseCLI/Support_Policy.txt
+  - Terms of Use: https://www.sxcomp.42web.io/p/SXServiseCLI/Terms_of_Use.txt
+  - Privacy Policy: https://www.sxcomp.42web.io/p/SXServiseCLI/Privacy_Policy.txt
+  - Disclaimer of liability: https://www.sxcomp.42web.io/p/SXServiseCLI/Disclaimer_of_liability.txt
+  - Acceptable Use Policy: https://www.sxcomp.42web.io/p/SXServiseCLI/Acceptable_Use_Policy.txt
+
 **Warning:** __We are not responsible for any actions you take. Our project is open access; however, modification of system files (e.g., main.py) is strictly prohibited. You are solely responsible for your actions. All functionality in this application is intended for development, training, and testing only. If you believe our project infringes on your copyright, or if you have any questions, please contact us at sxservise@outlook.com.__
 
 Copyright:
