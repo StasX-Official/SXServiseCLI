@@ -1,0 +1,6 @@
+path_addons_cfg = "System/configs/addons.cfg.json"
+path_api_cfg = "System/configs/api.cfg.json"
+path_system_cfg = "System/configs/system.cfg.json"
+path_localhost_cfg = "System/configs/localhost.cfg.json"
+path_user_cfg = "System/configs/user.cfg.json"
+path_pers_cfg = "System/configs/personalization.cfg.json"

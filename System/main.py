@@ -1,1322 +1,1242 @@
-
-import tqdm
-import time
 import json
-import requests
-import subprocess
+import sys
 import os
+import time
+from ftplib import FTP
 from tqdm import tqdm
-from datetime import datetime
-from colorama import init, Fore, Back, Style
+import random
+import paramiko
+import os
+from cryptography.fernet import Fernet
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+from Crypto.Random import get_random_bytes
+from getpass import getpass
 import ctypes
-import qrcode
-import socketserver
+from colorama import Fore
+from System.media.logo import sxscli_logo_
+from System.color_map import color_map
 import socket
-from plyer import notification
+import whois
+import dns.resolver
+import ssl
+import concurrent.futures
+import logging
+import platform
+import subprocess
+from datetime import datetime
+from System.cfg_path_map import path_addons_cfg, path_api_cfg, path_system_cfg, path_localhost_cfg, path_user_cfg, path_pers_cfg
+from rich.console import Console
+from rich.prompt import Prompt
+from rich.tree import Tree
+from rich import box
+import colorama
+colorama.init(autoreset=True)
 
-current_timeQ12F = datetime.now()
-formatted_timeQ12F = current_timeQ12F.strftime("%H:%M:%S")
-fileQ12F = open("logs.txt", "a")
-
-def error(error, dep_code):
-    main_error(error, dep_code)
-    
-def main_error(error_sxg, code):
-    from datetime import datetime
-    current_time = datetime.now()
-    formatted_time = current_time.strftime("%H:%M:%S")
-    file = open("error_logs.txt", "a")
-    error_txt = error_sxg
-
-    if code == 0:
-        #SXG OTHER ERROR
-        code_sys_erro = "OTHER"
-        save_error(file, formatted_time, error_txt, code_sys_erro)
-    elif code == 1:
-        #SXG FUNCTION ERROR
-        code_sys_erro = "FUNCTION"
-        save_error(file, formatted_time, error_txt, code_sys_erro)
-    elif code == 2:
-        #SXG SYSTEM ERROR
-        code_sys_erro = "SYSTEM"
-        save_error(file, formatted_time, error_txt, code_sys_erro)
-    else:
-        erro_code_auth = "Invalid department code. Error: 7900"
-        code_sys_erro = "ERROR_AUTH"
-        save_error(file, formatted_time, erro_code_auth, code_sys_erro)
-
-def notification_mess(title_m, message_c):
-    if user_tlc_plan=="FREE":
-        notification.notify(
-            title=title_m,
-            message=message_c,
-            app_name="SXServiseCLI2024",
-            timeout=1
-        )
-        return True
-    elif user_tlc_plan=="PLUS":
-        notification.notify(
-            title=title_m,
-            message=message_c,
-            app_name="SXServiseCLI2024+",
-            timeout=1
-        )
-        return True
-    elif user_tlc_plan=="PRO":
-        notification.notify(
-            title=title_m,
-            message=message_c,
-            app_name="SXServiseCLI2024-PRO",
-            timeout=1
-        )
-        return True
-    else:
-        notification.notify(
-            title=title_m,
-            message=message_c,
-            app_name="SXServiseCLI2024",
-            timeout=1
-        )
-
-def save_error(file, time, error, code):
-    print(time, "SXG - ", error, code)
-    text_to_write = f"{time}", error, code, ".\n"
-    auth2v = str(text_to_write)
-    file.write(auth2v)
-    file.close()
-
-global file
-file = open("logs.txt", "a")
-
-#Project developer: Kozosvyst Stas (StasX)
-#Devoper info: FullName: Kozosvyst Stas; Mail: stasx.official.xx@gmail.com; Google Dev Prof: https://g.dev/StasX; LinkedIn: https://www.linkedin.com/in/stas-kozosvyst-a73782279/ ;
-#The project is under development (BETA)
-#Copying the code is prohibited by SX copyright.
-#GitHub wiki page -> https://github.com/StasX-Official/SXServiseCLI/wiki
-#GitHub project page -> https://github.com/StasX-Official/SXServiseCLI
-#Thanks a lot for installing! - StasX.
+class SXServiseCLI:
+    def __init__(self, other):
         
-def starting():
-    print("Cheking files...")
-    check_list = [
-        ("System/img", "Папку img"),
-        ("System/dlc", "Папку dlc"),
-        ("System/Local", "Папку Local"),
-        ("System/cache", "Папку cache"),
-        ("System/LocalHostData", "Папку LocalHostData"),
-        ("System/Mods", "Папку Mods"),
-        (".sx", "Папку .sx"),
-        (".idea", "Папку .idea"),
-        (".vscode", "Папку .vscode"),
-        ("System/cmdstorage.py", "Файл cmdstorage.py"),
-        ("System/mod_launcher_sxservisecli.py", "Файл mod_launcher_sxservisecli.py"),
-        ("addons_system.py", "Файл addons_system.py"),
-        ("api_system.py", "Файл api_system.py"),
-        ("error_logs.txt", "Файл error_logs.txt"),
-        ("first_app_start.py", "Файл first_app_start.py"),
-        ("first_start.cmd", "Файл first_start.cmd"),
-        ("info.txt", "Файл info.txt"),
-        ("run.cmd", "Файл run.cmd"),
-        ("first_start.cmd", "Файл first_start.cmd")
-    ]
-    
-    for item, name in tqdm(check_list, desc="Progress"):
-        if os.path.isdir(item):
-            fsdfsdfsdf=0
-            time.sleep(0.1)
-        elif os.path.isfile(item):
-            fsdfsdfsdf=0
-            time.sleep(0.1)
-        else:
-            print(Fore.RED + f"{name} не знайденно.")
-            time.sleep(4)
-            exit()
-    
-     
-
-
-sxserviseclilogo = Fore.GREEN + """
- #######  ###  ##  #######  #######  ######   ##  ###  #######  #######  #######           #######   ##      #######
- ##       ###  ##  ##       ##       ##  ##   ##  ###    ###    ##       ##                ##  ###   ##        ###
- #######  ###  ##  #######  ##       ##  ##   ##  ###    ###    #######  ##                ##  ###   ##        ###
-      ##   #####        ##  #######  #######  ##  ###    ###         ##  #######           ##       ###        ###
- ###  ##  ##  ###  ###  ##  ###      ### ###  ## ####    ###    ###  ##  ###               ##   ##  ###        ###
- ###  ##  ##  ###  ###  ##  # #      ### ###   #####     ###    ###  ##  # #               ##   ##  ###        ###
- #######  ##  ###  #######  #######  ### ###    ###    #######  #######  #######           #######  ######   #######
-"""
-
-
-def start_all(user1mail, user1name, sxservisecliPLUSuser0, app_name0, version0, app_id0, com0, author0, description0, license0, api_enabled0, api_path0, logs_enabled0, ai_support0, local_default_port0, local_hosting_support0, local_default_path0, root_name0, root_pass0, addon_data, api_data):
-    global addons_data
-    addons_data=addon_data
-    global apidata
-    apidata=api_data
-    global user_lc
-    user_lc=sxservisecliPLUSuser0
-    class sxservisecli2024:
-        class Cache:
-            def cache_clear(self, cache_folder_name):
-                pass
+        self.console = Console()
         
-            def cache_save_txt(self, path_to_save, cache_info_txt):
-                pass
+        with open(path_addons_cfg, 'r') as cache_ootgg2:
+            self.addons_cfg = json.load(cache_ootgg2)
         
-
-            def cache_delete(self):
-                pass
+        with open(path_api_cfg, 'r') as cache_ootgg2f:
+            self.api_cfg = json.load(cache_ootgg2f)
             
-        class send:
-            def command(self):
-                pass
+        with open(path_system_cfg, 'r') as cache_ootgg2fq:
+            self.system_cfg = json.load(cache_ootgg2fq)
+        
+        with open(path_user_cfg, "r") as cache_rerwfds:
+            self.user_cfg = json.load(cache_rerwfds)
+        
+        with open(path_localhost_cfg, "r") as cache_fdfsfsfsfq:
+            self.localhost_cfg = json.load(cache_fdfsfsfsfq)
+        
+        with open(path_pers_cfg, "r") as cache_gksjnqfqq:
+            self.pers_cfg = json.load(cache_gksjnqfqq)
+
             
-            def command_to_core(self):
-                pass
-            
-            def command_with_root(self,command):
-                pass
-        
-        class install:
-            def mods(self):
-                pass
-            
-        
-        class init:
-            def mode(self):
-                pass
-            
-            def dlc__init(self):
-                global dlc_path
-                global dlc_sxservisecli2024withAI_path
-                dlc_path="System/dlc"
-                dlc_sxservisecli2024withAI_path="/sxservisecliDLCAI"
-                
-                
-            
-            def dlc(self):
-                pass
-            
-            class auth:
-                def registration(self):
-                    pass
-                
-                def authorization(self):
-                    pass
-        
-        def start(self):
-            pass
-        
-        def restart(self):
-            pass
-        
-        def stop(self):
-            pass
-        
-    init(autoreset=True)
-    from System.Local.sxg.core import core_main
-    print("STARTING CORS..."+ str(core_main(1,0)))
-    ModuleNotFoundError = "Plugin not found. Install the plugin on our website https://sxcomp.42web.io/ or contact SX technical support."
-    
-    global logo_sxservisecli_free_path
-    global logo_sxservisecli_plus_path    
-    global logo_sxservisecli_pro_path
-    global logo_sx_path
-    logo_sxservisecli_free_path="img/logo/sxservisecli2024logo.png" 
-    logo_sxservisecli_plus_path="img/logo/sxservisecli2024pluslogo.png" 
-    logo_sxservisecli_pro_path="img/logo/sxservisecli2024prologo.png" 
-    logo_sx_path="img/logo/sxlogo.png"
-    global current_time
-    current_time = datetime.now()
-    global formatted_time
-    formatted_time = current_time.strftime("%H:%M:%S")
-    icon_path = os.path.abspath("logo.ico")
-    
-    global username
-    username=user1name
-    global usermail
-    usermail=user1mail
-    global sxservisecliPLUS
-    sxservisecliPLUS = sxservisecliPLUSuser0
-    
-    global local_default_port
-    local_default_port = local_default_port0
-    global local_hosting_support
-    local_hosting_support = local_hosting_support0
-    global local_default_path
-    local_default_path = local_default_path0
-    
-    global user_tlc_plan
-    user_tlc_planX=sxservisecliPLUS
-    
-        
-    global root_name
-    root_name=root_name0
-    global root_pass
-    root_pass=root_pass0
-    
-    global ai_support
-    ai_support=ai_support0
-    app_name = app_name0
-    version = version0
-    global app_id
-    app_id = app_id0
-    global com
-    com = com0
-    global author
-    author = author0
-    global description
-    description = description0
-    global license
-    license = license0
-    global api_enabled
-    api_enabled = api_enabled0
-    global api_path
-    api_path = api_path0
-    global logs_enabled
-    logs_enabled = logs_enabled0
-
-    
-    global my_app_id
-    my_app_id = app_id
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(com)    
-
-    global app_ver
-    app_ver=version
-    global app_ai_ver
-    app_ai_ver = "AI V0.10BETA"
-    global logs1
-    logs1=logs_enabled
-    starting()
-    
-    #CORS STARTING
-    print(sxserviseclilogo)
-    global user_tlc_plan
-    if user_tlc_planX=="user_subsc=FREE":
-        user_tlc_plan="FREE"
-    elif user_tlc_planX=="user_subsc=ERROR":
-        user_tlc_plan="ERROR"
-    elif user_tlc_planX=="user_subsc=PLUS":
-        user_tlc_plan="PLUS"
-    elif user_tlc_planX=="user_tlc_plan=PRO":
-        user_tlc_plan=="PRO"
-    elif user_tlc_planX=="x":
-        print("  ")
-        print(Fore.GREEN +"AUTH_ERROR:")
-        print(Fore.RED +"   - UA: Ой, ви ще не зарегістровані й не можете поки використовувати додаток...")
-        print(Fore.RED +"   - UA: Запустіть: first_start.cmd (WINDOWS) або first_app_start.py (Other)")
-        print(" ")
-        print(Fore.RED +"   - ENG: Oops, you`re not registered yet and cant`t use the app yet...")
-        print(Fore.RED +"   - ENG: Run: first_start.cmd (WINDOWS) or first_app_start.py (Other)")
-        time.sleep(5)
-        exit()
-        
-    print(f"Welcome {username}!")
-    print("Do you need help? - help")
-    print(f"Profile - plan")
-
-    print(" ")
-    input_command()
-
-
-command0 = "exit"
-command1 = "help"
-command2 = "loginCL"
-command3 = "support"
-command4 = "localhost"
-command5 = "json"
-command6 = "qr"
-command7 = "qrcode"
-command8 = "ping"
-command9 = "passworld"
-command10 = "sxg install"
-command11 = "http"
-command12 = "https"
-command13 = "dns"
-command14 = "host"
-command15 = "arduino"
-command16 = "ai"
-command17 = "sxscinf"
-command18 = "root"
-command19 = "core"
-command20 = "control"
-command21 = "plan"
-command22 = "+"
-
-def activate_licension_key():
-    pass
-
-def sxservisecliTRPLAN():
-    print(" --> User card: ")
-    print("     >Name - "+str(username))
-    print("     >Mail - "+str(usermail))
-    print("     >Status -> "+str(user_lc))
-    print("     >Balance - > X $")
-    print("SXServiseCLI2024 - BETA")
-    input_command()
-
-def http_req_func():
-    print("-------------------------")
-    print("Connecting to web servers")
-    print("-------------------------")
-    print("Connect to server - 0")
-    print("exit - 1")
-    http_reg_funt_input_command = int(input())
-    if http_reg_funt_input_command == 0:
-        print("Enter server url...")
-        server_url_http_func_input = input()
-        url_to_request = server_url_http_func_input
-        response_data = http_request(url_to_request)
-        print(response_data)
-        input_command()
-    elif http_reg_funt_input_command == 1:
-        input_command()
-    else:
-        print("Not Found.")
-        input_command()
-
-def http_request(url):
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.text
-        else:
-            return f"HTTP Error: {response.status_code}"
-    except requests.exceptions.RequestException:
-        return "Unable to connect to the server."
-
-def control_command():
-    time.sleep(0.5)
-    print("SXServiseCLI 2024 - CONTROL")
-    x=f"""
-Settings-Control:
- >Global info:
- - logs -> {logs_enabled}
- - api  -> {api_enabled}
- - ai   -> {ai_support}
- 
- >LocalHost info:
- - LocalHost support -> {local_hosting_support}
- - default port      -> {local_default_port}
- - default path      -> {local_default_path} 
- 
- >SXServiseCLI info:
- - Version    -> {app_ver}
- - AI-Version -> {app_ai_ver}
- - ID         -> {app_id}
- - com        -> {com}
- 
- >Passwords:
- - Root name -> *****
- - Root password -> *****
- 
- >Control-menu info:
- - Control-Version -> v0.2.1
- - Control-Id -> SXSERVISECI2024SXCOMP-SX-APP-ID-OFFICIAL-SXSCLI-CONTR:4204
- 
- >Developer mode -> False (Soon)
- >Testing mode -> False (Soon)
-"""
-    print(x)
-    input_command()
-    
-def core_command1():
-    print("-----=> SXServiseCLI Core MENU")
-    print("Continue - 1")
-    print("Exit - 0")
-    
-    def core_status():
-        from System.Local.sxg.core import core_main
-        
-        servisecore_st = str(core_main(3,0))
-    
-        print("-----=> SXServiseCLI Core STATUS")
-        print("CORE:    STATUS: ")
-        print("Servise_CR - "+ servisecore_st)
-        print("Auth_CR - ")
-        print("LocalHost_CR - ")
-        print(" - - - - - - - - - - - - - - -")
-        print("True - STARTED, False - Stoped")
-    
-    def core_menu():
-        print(" ")
-        print("-SXSERVISECLI CORE MENU-")
-        print(" ")
-        print("/*/Settings - 2")
-        print("/*/Status - 1")
-        print("/*/Exit - 0")
-        print(" ")
-        def core_menu_c_auth(command):
-            if command==0:
-                input_command()
-            elif command == 1 :
-                core_status()
-            else:
-                print("ERROR. 404  Command Not Found.")
-                core_menu_c()
-                
-        def core_menu_c():
-            core_menu_inp=int(input(">>> "))
-            core_menu_c_auth(core_menu_inp)
-            
-        core_menu_c()
-        
-    def core_root_command_inp():
-        print("Core - SXServiseCLI2024")
-        print(" ")
-        print("-=> You will need root access to use it")
-        print(" ")
-        print("Continue - 0")
-        print("Exit - 1")
-        print(" ")
-        
-        def core_root_command_inp_command_auth(command0or1):
-            def core_root_command_error(error):
-                print("ERROR! ", error)
-                print("Restart? ")
-                print(" ")
-                print("Continue - 1")
-                print("Exit - 0")
-                print(" ")
-                
-                def core_root_command_error_input_auth(command):
-                    if command==1:
-                        core_root_command_inp()
-                    elif command==0:
-                        input_command()
-                    else:
-                        print("ERROR! Invalid Input")
-                        core_root_command_error_input()
-                    
-                def core_root_command_error_input():
-                    core_root_command_error_input_command=str(input(">>> "))
-                    core_root_command_error_input_auth(core_root_command_error_input_command)
-                    
-                core_root_command_error_input()
-            if command0or1==0:
-                def root_pass_core_command_check(root_name9,root_pass9):
-                    time.sleep(1)
-                    if logs_enabled==True:
-                        print("Logs enabled!")
-                        if root_name9==root_name:
-                            print("AUTH_LOGS: ROOT_NAME AUTH TRUE!")
-                            time.sleep(1)
-                            if root_pass9==root_pass:
-                                print("AUTH_LOGS: ROOT_PASS AUTH TRUE!")
-                                core_menu()
-                            else:
-                                print("AUTH_LOGS: ROOT_PASS AUTH FALSE!")
-                                core_root_command_error("ROOT PASSWORD WRONG")
-                        else:
-                            print("AUTH_LOGS: ROOT_NAME AUTH FALSE!")
-                            core_root_command_error("ROOT NAME WRONG")
-
-                
-                print(" ")
-                print("Enter ROOT_NAME...")
-                core_auth1_root_name=str(input(">>> "))
-                print("Enter ROOT_PASS...")
-                core_auth1_root_pass=str(input(">>> "))
-                root_pass_core_command_check(core_auth1_root_name, core_auth1_root_pass)
-            elif command0or1==1:
-                input_command()
-            else:
-                print("ERROR. 404. Command not found.")
-                print("0 - Continue, 1 - Exit... Enter 0 or 1...")
-                core_root_command_inp_command()
-
-        def core_root_command_inp_command():
-            core_root_command_inp_c=int(input(">>> "))
-            core_root_command_inp_command_auth(core_root_command_inp_c)
-            
-        core_root_command_inp_command()
-    
-    def auth_core_command_inp_auth(command0or1):
-        if command0or1==0:
-            input_command()
-        elif command0or1==1:
-            core_root_command_inp()
-        else:
-            print("ERROR. 404")
-            auth_core_command_inp()
-    
-    def auth_core_command_inp():
-        start_core_command_inp=int(input(">>> "))
-        auth_core_command_inp_auth(start_core_command_inp)
-    
-    auth_core_command_inp()
-
-
-def host_command():
-    print("Host - SXServiseCLI2024")
-    print(" ")
-    print("-=> You will need root access to use it")
-    print(" ")
-    print("Continue - 0")
-    print("Exit - 1")
-    print(" ")
-    def auth():
-        continue_command=int(input(">>> "))
-        if continue_command==1:
-            input_command()
-        elif continue_command==0:
-            def root_auth1():
-                print("Enter ROOT_NAME")
-                root_name0=input(">>> ")
-                print("Enter ROOT_PASS")
-                root_pass0=input(">>> ")
-                host_root_auth_main(root_name0,root_pass0)
-            root_auth1()
-        else:
-            print("Error! 404. Invalid Num")
-            auth(">>> ")
-    
-    def host_root_auth_main(rootname,rootpass):
-        #logic
-        if rootname==root_name:
-            if logs_enabled==True:
-                print("AUTH-LOG: ROOT_NAME Valid")
-                time.sleep(1)
-                if  rootpass==root_pass:
-                    print("AUTH-LOG: ROOT_PASS Valid")
-                    if local_hosting_support==True:
-                        check_host_av_func()
-                    else:
-                        print("Host support - OFF")
-                        input_command()
-                else:
-                    print("AUTH-LOG: ROOT_PASS Invalid")
-                    q1ex="ROOT_PASS"
-                    error_lc_3(q1ex)
-                    
-            time.sleep(1)
-            if  rootpass==root_pass:
-                start_lchost_func_sxg()
-            else:
-                q1ex="ROOT_PASS"
-                error_lc_3(q1ex)
-
-        elif rootpass==root_pass:
-            if logs_enabled==True:
-                print("AUTH-LOG: ROOT_NAME Invalid")
-                time.sleep(1)
-                print("AUTH-LOG: ROOT_PASS Valid")
-                q2ex1="ROOT_NAME"
-                error_lc_3(q2ex1)
-            
-            time.sleep(1)
-            q2ex1="ROOT_NAME"
-            error_lc_3(q2ex1)
-                
-        else:
-            def error_lc_3(errorc):
-                print("ERROR: Incorrect information. ", errorc)
-                print("-=> Please try again")
-                print(" ")
-                print("Try again - 1")
-                print("Exit - 0")
-                print(" ")
-                global host_auth_main_truagain
-                host_auth_main_truagain=int(input(">>> "))
-                if host_auth_main_truagain==0:
-                    input_command()
-                elif host_auth_main_truagain==1:
-                    input_command()
-                else:
-                    print("Errot!  Wrong number")
-                    input_command()
-    auth()
-            
-def check_host_av_func():
-    print("-------------------------")
-    print("Host availability review")
-    print("-------------------------")
-    print("Run the check - 0")
-    print("exit - 1")
-    check_host_availability_command_input = int(input())
-    if check_host_availability_command_input == 0:
-        print("Enter host...")
-        host = input()
-        print("Enter port... Default 80")
-        port = int(input())
-        if check_host_availability(host, port):
-            print(f"{host}:{port} is reachable.")
-            input_command()
-        else:
-            print(f"{host}:{port} is not reachable.")
-            input_command()
-
-    elif check_host_availability_command_input == 1:
-        input_command()
-    else:
-        print("Not Found.")
-        check_host_av_func()
-
-
-def check_host_availability(host, port):
-    try:
-        socket.create_connection((host, port), timeout=5)
-        return True
-    except (socket.timeout, ConnectionError):
-        return False
-    
-
-
-def create_qrcode():
-    print("Your text for the QR code:")
-    qrcodetextdata = input()
-    qrcodesizedataY = int(input("QR code cell size (default is 10): "))
-    qrcodesizedataX = int(input("Border width (default is 4): "))
-    
-    print("Creating your QR code...")
-    time.sleep(1)
-    
-    data = qrcodetextdata
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=qrcodesizedataY,
-        border=qrcodesizedataX,
-    )
-    qr.add_data(data)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    img_path = "qrcode.png"
-    img.save(img_path)
-    
-    print("QR code created successfully!")
-    os.startfile(img_path)
-    input_command()
-
-def command_qrcode_menu1():
-    print("-----------")
-    print(" -> QR-Code")
-    print("-----------")
-    print("/*/- Create - 0")
-    print("/*/-Edit Existing - 1")
-    print("/*/-Decode - 2")
-    print("/*/-Wi-Fi QR Code - 3")
-    print("/*/-Exit   - 4")
-    print("-----------")
-    command_qrcode23 = int(input(Fore.BLUE + ">>> "))
-    
-    if command_qrcode23 == 0:
-        create_qrcode()
-    elif command_qrcode23 == 1:
-        edit_qrcode()
-    elif command_qrcode23 == 2:
-        decode_qrcode()
-    elif command_qrcode23 == 3:
-        create_wifi_qrcode()
-    elif command_qrcode23 == 4:
-        text_to_write = f"{formatted_timeQ12F} The exit command is running\n"
-        file.write(text_to_write)
-        input_command()
-    else:
-        print(Fore.RED + "Unknown command.")
-        text_to_write = f"{formatted_timeQ12F} Error code: 404. Unknown command.\n"
-        file.write(text_to_write)
-        command_qrcode_menu1()
-
-    
-def edit_qrcode():
-    filename = input("Enter the filename of the QR code to edit: ")
-    
-    try:
-        with open(filename, "r") as qr_file:
-            qrcodetextdata = qr_file.readline().strip()
-        print("Editing QR code:", qrcodetextdata)
-        
-        new_text = input("Enter new text for the QR code: ")
-        
-        with open(filename, "w") as qr_file:
-            qr_file.write(new_text)
-        print("QR code updated successfully!")
-        input_command()
-        
-    except FileNotFoundError:
-        print(Fore.RED + "File not found." + Style.RESET_ALL)
-        input_command()
-
-def decode_qrcode():
-    print("Decode QR code:")
-    qrcode_image = input("Enter the filename of the QR code image: ")
-    
-    try:
-        img = qrcode.make(qrcode_image)
-        qr_data = img.data.decode("utf-8")
-        print("Decoded data:", qr_data)
-        input_command()
-    except FileNotFoundError:
-        print(Fore.RED + "File not found." + Style.RESET_ALL)
-        input_command()
-    except UnicodeDecodeError:
-        print(Fore.RED + "Error decoding QR code." + Style.RESET_ALL)
-        input_command()
-
-def create_wifi_qrcode():
-    ssid = input("Enter Wi-Fi SSID: ")
-    password = input("Enter Wi-Fi Password: ")
-    
-    wifi_qr_data = f"WIFI:S:{ssid};T:WPA;P:{password};;"
-    qrcodesizedataY = int(input("QR code cell size (default is 10): "))
-    qrcodesizedataX = int(input("Border width (default is 4): "))
-    
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=qrcodesizedataY,
-        border=qrcodesizedataX,
-    )
-    qr.add_data(wifi_qr_data)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    img_path = "wifi_qrcode.png"
-    img.save(img_path)
-    
-    print("Wi-Fi QR code created successfully!")
-    os.startfile(img_path)
-    input_command()
-    
-def root_menu():
-    print("Root Munu: ")
-    print("Root info - 1")
-    print("Exit - 0")
-    rootcommand=int(input(">>> "))
-    if rootcommand==1:
-        print(" ")
-        print("Root info...")
-        print("Show root information?  y/n")
-        def show_root_info():
-            print(" ")
-            q1=str(input(">>> "))
-            if q1=="y":
-                print("  SXSERVISECLI ROOT INFO:")
-                time.sleep(2)
-                print("/*/ - Root name - ", root_name, "SYSTEM: sxservisecli1")
-                print("/*/ - Root pass - ", root_pass, "SYSTEM: sxservisecli1")
-                print(" ")
-                input_command()
-            elif q1=="n":
-                input_command()
-            else:
-                show_root_info()
-        show_root_info()         
-    elif  rootcommand==0:
-        input_command()
-
-def command_sxscinf():
-    print("SXServiseCLI Info:")
-    print(">Global info: ")
-    print("    /=/Author: ", author)
-    print("    /=/Version: ", app_ver)
-    print("    /=/Com: ", com)
-    print("    /=/Id: ", app_id)
-    print(">Machine learning:")
-    print("    /=/AI Support: ", ai_support)
-    print("    /=/AI Version: ", app_ai_ver)
-    print(">API:")
-    print("    /=/API Support: ", api_enabled)
-    print("    /=/API Path: ", api_path)
-    print(">Local Host:")
-    print("    /=/default_port:", local_default_port)
-    print("    /=/local hosting support: ", local_hosting_support)
-    print("    /=/Default path: ", local_default_path)
-    input_command()
-    
-def command_help():
-    print("Command list:")
-    print("     /*/ help - Display this list of commands")
-    print("     /*/ support - Contact technical support")
-    print("     /*/ localhost - Manage local server")
-    print("     /*/ json - Manage JSON files")
-    print("     /*/ qrcode - Manage QR codes")
-    print("     /*/ exit - Exit the program")
-    print("     /*/ http - Connecting to web servers")
-    print("     /*/ host - Checking the availability of hosts")
-    print("     /*/ sxscinf - Application information")
-    print("     /*/ dns - DNS analysis (BETA)")
-    print("     /*/ root - SXServiseCLI Root (BETA)")
-    print("     /*/ core - SXServiseCLI Core Menu (BETA)")
-    print("Soon...")
-    print("     /*/ ipinfo - Get all ip info (SOON)")
-    print("     /*/ crypto - Menu. SXServiseCLI crypto func (SOON)")
-    print("     /*/ DLC-control - Get dlc control panel (SOON)")
-    print("     /*/ Mods-control - Get mods control panel (SOON)")
-    print("     /*/ create-ai - Create AI  (SOON)")
-    print("     /*/ addons - Get system addons panel (SOON)")
-    print("     /*/ api-create - Create API only python* (SOON)")
-    print("     /*/ api-test - Test API (SOON)")
-    print("     /*/ add-sxscli2024-to-my-app - Get SXServiseCLI2024 for your app (SOON)")
-    print("==========================================")
-    print("App info:")
-    print("SXServiseCLI Version: ", app_ver)
-    print("AI Version: ", app_ai_ver)
-    print("==========================================")
-    print(" ")
-
-    input_command()
-
-def command_support():
-    print("Beta version of the application")
-    print("If you need assistance or have any questions, please contact our technical support.")
-    print("Site - http://sxcomp.42web.io/")
-    print("Mail - stasx@engineer.com")
-    input_command()
-
-def ping_host(host):
-    try:
-        subprocess.run(["ping", "-c", "4", host])
-        host_to_ping = input("Enter the host to ping: ")
-        ping_host(host_to_ping)
-    except Exception as e:
-        print("Error:", e)
-        error("Error code: 4010. Error ping function", 1)
-
-def command_loginCL():
-    print("Auth...")
-    print("Sign in - 0")
-    print("Register - 1")
-    user_command_input = int(input(">>> "))
-    if user_command_input == 0:
-        login_CL_sxg()
-    elif user_command_input == 1:
-        register_ac_sxg() 
-    else:
-        print("Error!")
-        input_command()
-    input_command()
-
-def login_CL_sxg():
-    email = input("Enter you mail... >>> ")
-    password = input("Enter you password... >>> ")
-    url = "https://sxservise.web.app/api/sxservise-cli/auth"
-
-    data = {
-        "mail": email,
-        "password": password
+        self.logo=sxscli_logo_
+        cont_debug_json={
+    "debug_status": False,
+    "debug_settings": {
+        "level_": "INFO",
+        "show_debug_message": False,
+        "format": "%(asctime)s - %(name)s - %(levelname)s - SXSCLI: %(message)s"
     }
-
-    response = requests.post(url, json=data)
-
-    if response.status_code == 200:
-        print("Успішний вхід")
-        global User
-        user = email
-    else:
-        print("Помилка входу:", response.text)
+}
+        self.staff_path=self.system_cfg["STAFF"]["path"]
+        SXServiseCLI.create_folder_if_not_exists(self, self.staff_path)
+        SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/logs")
+        SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/results")
+        SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/projects")
+        SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/dlc")
+        SXServiseCLI.check_and_create_json(self, self.staff_path+"/debug.json", cont_debug_json)
+        with open("Staff\debug.json","r") as cache_fdfdfqqqqq:
+            self.debug_cfg = json.load(cache_fdfdfqqqqq)        
+        handlers = [logging.FileHandler(self.staff_path + "/logs/cli_logs.log")]
+        if self.debug_cfg["debug_status"]:
+            if self.debug_cfg["debug_settings"]["show_debug_message"]:
+                handlers.append(logging.StreamHandler()) 
         
-def register_ac_sxg():
-    import webbrowser
-    webbrowser.open("https://sxservise.web.app")
-    input_command()
+        if self.debug_cfg["debug_settings"]["level_"] == "DEBUG":
+            level = logging.DEBUG
+        elif self.debug_cfg["debug_settings"]["level_"] == "INFO":
+            level = logging.INFO
+        elif self.debug_cfg["debug_settings"]["level_"] == "WARNING":
+            level = logging.WARNING
+        elif self.debug_cfg["debug_settings"]["level_"] == "ERROR":
+            level = logging.ERROR
+        elif self.debug_cfg["debug_settings"]["level_"] == "CRITICAL":
+            level = logging.CRITICAL
+        else:
+            level = logging.INFO
+        
+        
+        if self.system_cfg["settings"]["logs"]==True:
+            log_dir = os.path.dirname(self.staff_path + "/logs/cli_logs.log")
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
 
-def select_ip():
-    print("Select IP Address:")
-    print("1. Localhost (127.0.0.1)")
-    print("2. Custom IP")
-    choice = input("Enter your choice: ")
-    
-    if choice == "1":
-        return "127.0.0.1"
-    elif choice == "2":
-        custom_ip = input("Enter custom IP: ")
-        return custom_ip
-    else:
-        return "Unknown IP"
+            logging.basicConfig(
+                level=level,
+                format=self.debug_cfg["debug_settings"]["format"],
+                handlers=handlers
+            )
+        else:
+            log_dir = os.path.dirname(self.staff_path + "/logs/cli_logs.log")
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
 
-def additional_information():
-    print("Additional Information:")
-    print("Enter any additional information you want to store:")
-    info = input()
-    return info
-
-def command_create_json():
-    filename = input("Enter the filename for JSON: ")
-    
-    data = {}
-    print("Enter data for JSON:")
-    for key in ["name", "age", "city"]:
-        data[key] = input(f"{key.capitalize()}: ")
-
-    with open(filename, "w") as json_file:
-        json.dump(data, json_file, indent=4)
-    print(Fore.GREEN + "JSON file created successfully." + Style.RESET_ALL)
-
-def command_read_json():
-    filename = input("Enter the filename for JSON: ")
-    
-    try:
-        with open(filename, "r") as json_file:
-            data = json.load(json_file)
-            print("Data in JSON file:")
-            print(data)
-    except FileNotFoundError:
-        print(Fore.RED + "File not found." + Style.RESET_ALL)
-        error("Error code: 404. File not found", 1)
-
-def command_check_json_validity():
-    filename = input("Enter the filename for JSON: ")
-    
-    try:
-        with open(filename, "r") as json_file:
-            json.load(json_file)
-            print(Fore.GREEN + "JSON file is valid." + Style.RESET_ALL)
-    except json.JSONDecodeError:
-        print(Fore.RED + "JSON file is not valid." + Style.RESET_ALL)
-        error("Error code: 4041. JSON file is not valid.", 1)
-
-def command_sort_json_data():
-    filename = input("Enter the filename for JSON: ")
-    
-    try:
-        with open(filename, "r") as json_file:
-            data = json.load(json_file)
-            sorted_data = {k: v for k, v in sorted(data.items())}
-            print("Sorted JSON data:")
-            print(sorted_data)
-    except FileNotFoundError:
-        print(Fore.RED + "File not found." + Style.RESET_ALL)
-        error("Error code: 404. File not found", 1)
-
-def command_json_menu():
-    print("-----------------")
-    print("----json-menu----")
-    print("-----------------")
-    print("    >Create json - 0")
-    print("    >Read json - 1")
-    print("    >Check JSON validity - 2")
-    print("    >Sort JSON data - 3")
-    print("    >Exit - 4")
-    print("Enter command:")
-
-    jsonmenucommand = int(input())
-    formatted_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    if jsonmenucommand == 0:
-        text_to_write = f"{formatted_time} The create_json command is running\n"
-        file.write(text_to_write)
-        command_create_json()
-    elif jsonmenucommand == 1:
-        text_to_write = f"{formatted_time} The read_json command is running\n"
-        file.write(text_to_write)
-        command_read_json()
-    elif jsonmenucommand == 2:
-        text_to_write = f"{formatted_time} The check_json_validity command is running\n"
-        file.write(text_to_write)
-        command_check_json_validity()
-    elif jsonmenucommand == 3:
-        text_to_write = f"{formatted_time} The sort_json_data command is running\n"
-        file.write(text_to_write)
-        command_sort_json_data()
-    elif jsonmenucommand == 4:
-        text_to_write = f"{formatted_time} The exit command is running\n"
-        file.write(text_to_write)
-    else:
-        print(Fore.RED + "Unknown command.")
-        text_to_write = f"{formatted_time} Error code: 404. Unknown command.\n"
-        file.write(text_to_write)
-        command_json_menu()
-
-def command_additional_info():
-    additional_info = additional_information()
-    print("Information stored:", additional_info)
-    input_command()
-import http
-
-def start_lchost_func_sxg():
-    if local_hosting_support == True:
-        command_localhost()
-    elif local_hosting_support == False:
-        print("Sorry, but local hosting support is unavailable.")
-        error("Error code: 403. Support is unavailable", 1)
-        input_command()
-    else:
-        print("Error reading information from the SXG system file")
-        error("Error code: 404. Error reading", 1)
-        input_command()
-
-
-def command_localhost():
-    print("LocalHost - SXServiseCLI2024")
-    print(" ")
-    print("-=> You will need root access to use it")
-    print(" ")
-    print("Continue - 0")
-    print("Exit - 1")
-    print(" ")
-    def localhost_root_auth_main(rootname,rootpass):
-        #logic
-        if rootname==root_name:
-            if logs_enabled==True:
-                print("AUTH-LOG: ROOT_NAME Valid")
-                time.sleep(1)
-                if  rootpass==root_pass:
-                    print("AUTH-LOG: ROOT_PASS Valid")
-                    if local_hosting_support==True:
-                        localhost_menu()
-                    else:
-                        print("Local Host support - OFF")
-                        input_command()
-                else:
-                    print("AUTH-LOG: ROOT_PASS Invalid")
-                    q1ex="ROOT_PASS"
-                    error_lc_3(q1ex)
-                    
-            time.sleep(1)
-            if  rootpass==root_pass:
-                start_lchost_func_sxg()
-            else:
-                q1ex="ROOT_PASS"
-                error_lc_3(q1ex)
-
-        elif rootpass==root_pass:
-            if logs_enabled==True:
-                print("AUTH-LOG: ROOT_NAME Invalid")
-                time.sleep(1)
-                print("AUTH-LOG: ROOT_PASS Valid")
-                q2ex1="ROOT_NAME"
-                error_lc_3(q2ex1)
+            logging.basicConfig(
+                level=level,
+                format=self.debug_cfg["debug_settings"]["format"]
+            )
             
-            time.sleep(1)
-            q2ex1="ROOT_NAME"
-            error_lc_3(q2ex1)
-                
-        else:
-            def error_lc_3(errorc):
-                print("ERROR: Incorrect information. ", errorc)
-                print("-=> Please try again")
-                print(" ")
-                print("Try again - 1")
-                print("Exit - 0")
-                print(" ")
-                global localhost_auth_main_truagain
-                localhost_auth_main_truagain=int(input(">>> "))
-                localhost_auth_main_truagain_auth()
-                
-            def localhost_auth_main_truagain_auth():
-                if localhost_auth_main_truagain==1:
-                    command_localhost()
-                elif localhost_auth_main_truagain==0:
-                    input_command()
-                else:
-                    print("ERROR: Incorrect information. Please try again")
-                    print(" ")
-
-            rert="ROOT_NAME, ROOT_PASS"
-            error_lc_3(rert)
-                    
-                    
-    def localhost_root_auth():
-        r1=int(input(">>> "))
-        if r1==0:
-            print(" ")
-            print("Enter the root name...")
-            localhost_root_auth_name=str(input(">>> "))
-            print("Enter the root pass...")
-            localhost_root_auth_pass=str(input(">>> "))
-            print("Auth...")
-            localhost_root_auth_main(localhost_root_auth_name, localhost_root_auth_pass)
-        elif r1==1:
-            input_command()
-        else:
-            print("Error. Enter a numeric value (0-1)")
-            localhost_root_auth()
-    localhost_root_auth()
-        
-def localhost_menu():
-    print("")
-    print("====================")
-    print("=====LocalHost======")
-    print("====================")
-    print("Start localhost - 0")
-    print("Stop localhost - 1")
-    print("exit - 2") # taskkill /PID 8000
-    print("====================")
-    print("# taskkill /PID 8000")
-    print("====================")
-    print("")
-    localhostcommand = int(input(Fore.BLUE + "sxservise >>> "))
-    if localhostcommand == 0:
-        print("Edit localhost setings: ")
-        print("Local host port, default=",local_default_port,":  ")
-        local_host_port = int(input())
-        print("Local host directory, default=",local_default_path,": ")
-        local_host_directory = input()
-
-        print("Starting localhost...")
-        for i in tqdm(range(100)):
-            time.sleep(0.01)
-        text_to_write = f"{formatted_time} Starting localhost...\n"
-        file.write(text_to_write)
-
-        start_local_server(local_host_port, local_host_directory)
-
-    elif localhostcommand == 1:
-        print("Stopping localhost...")
-        for i in tqdm(range(100)):
-            time.sleep(0.005)
-        text_to_write = f"{formatted_time} The stop_localhost command is running\n"
-        file.write(text_to_write)
-        stop_local_server()
-    elif localhostcommand == 2:
-        text_to_write = f"{formatted_time} The exit command is running\n"
-        file.write(text_to_write)
-    elif localhostcommand == command0:
-        text_to_write = f"{formatted_time} The exit command is running\n"
-        file.write(text_to_write)
-    else:
-        print(Fore.RED + "Unknown command.")
-        text_to_write = f"{formatted_time} Error code: 404. Unknown command.\n"
-        file.write(text_to_write)
-        command_localhost()
-
-def stop_local_server():
-    print("Stopping the server.")
-    text_to_write = f"{formatted_time} Stopping the localhost server.\n"
-    file.write(text_to_write)
-    raise KeyboardInterrupt
-
-
-def start_local_server(port, dir):
-    port = port
-    directory = dir
-    handler = http.server.SimpleHTTPRequestHandler
-    handler.directory = directory
-    with socketserver.TCPServer(("", port), handler) as httpd:
-        message = f"Server started at port {port} - http://localhost:{port}/System/LocalHostData/"
-        print(Fore.RED + "Press Control + C to stop localhost")
-        print(message)
-
-        message = f"Serving directory: {directory}"
-        print(message)
-
+        logging.info("Initialization started.")
         try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            httpd.server_close()
-            text_to_write = f"{formatted_time} Localhost server stopped.\n"
-            file.write(text_to_write)
-            print("Server stopped.")
+            self.app_name = self.system_cfg["appName"]
+            self.app_version = self.system_cfg["version"]
+            self.app_id = self.system_cfg["id"]
+            self.app_com = self.system_cfg["com"]
+            self.author = self.system_cfg["author"]
+            self.description = self.system_cfg["description"]
+            self.license = self.system_cfg["license"]
+            self.settings_api = self.system_cfg["settings"]["api"]
+            self.settings_api_path = self.system_cfg["settings"]["api_path"]
+            self.settings_AuthAPI = self.system_cfg["settings"]["AuthAPI"]
+            self.settings_ServisesAPI = self.system_cfg["settings"]["ServisesAPI"]
+            logging.info("SETTINGS_CONFIG: Initialization successful.")
+        except:
+            logging.error("SETTINGS_CONFIG: Initialization error.")
+            print(Fore.RED+"SETTINGS_CONFIG: Initialization error.")
+            sys.exit()
+        
+        try:
+            self.addons_support_status = self.addons_cfg["app_addons"]["addons_support_status"]
+            self.addons_user_auth_system_status = self.addons_cfg["app_addons"]["addons_user_auth_system_status"]
+            self.addons_need_user_plan_to_run = self.addons_cfg["app_addons"]["addons_need_user_plan_to_run"]
+            self.addons_SXSC_Security = self.addons_cfg["app_addons"]["SXSC-Security"]
+            self.addons_SXSC_Analytics = self.addons_cfg["app_addons"]["SXSC-Analytics"]
+            self.addons_SXSC_Optimizer = self.addons_cfg["app_addons"]["SXSC-Optimizer"]
+            self.addons_SXSC_Monitoring = self.addons_cfg["app_addons"]["SXSC-Monitoring"]
+            self.addons_SXSC_Integration = self.addons_cfg["app_addons"]["SXSC-Integration"]
+            self.addons_SXSC_Storage = self.addons_cfg["app_addons"]["SXSC-Storage"]
+            logging.info("ADDONS_CONFIG: Initialization successful.")
+        except:
+            logging.error("ADDONS_CONFIG: Initialization error.")
+            print(Fore.RED+"ADDONS_CONFIG: Initialization error.")
+            sys.exit()
+        
+        try:
+            self.auth_control_api_path = self.api_cfg["app_api_settings"]["Auth_Control_API_path"]
+            self.version_control_api_path = self.api_cfg["app_api_settings"]["Version_Control_API_path"]
+            self.cloud_control_api_path = self.api_cfg["app_api_settings"]["Cloud_Control_API_path"]
+            self.analytics_control_api_path = self.api_cfg["app_api_settings"]["Analytics_Control_API_path"]
+            self.servise_status_api_path = self.api_cfg["app_api_settings"]["Servise_Status_API_path"]
+            self.api_settings_security_auth = self.api_cfg["app_api_settings"]["Settings"]["Security"]["AUTH"]
+            self.api_settings_security_ssl = self.api_cfg["app_api_settings"]["Settings"]["Security"]["SSL"]
+            self.api_settings_methods_support_get = self.api_cfg["app_api_settings"]["Settings"]["MetodsSupport"]["GET"]
+            self.api_settings_methods_support_post = self.api_cfg["app_api_settings"]["Settings"]["MetodsSupport"]["POST"]
+            self.api_settings_methods_support_put = self.api_cfg["app_api_settings"]["Settings"]["MetodsSupport"]["PUT"]
+            self.api_settings_methods_support_delete = self.api_cfg["app_api_settings"]["Settings"]["MetodsSupport"]["DELETE"]
+            self.api_settings_methods_support_others = self.api_cfg["app_api_settings"]["Settings"]["MetodsSupport"]["Others"]
+            self.api_statuses_logging = self.api_cfg["app_api_settings"]["Settings"]["API_STATUSES_LOGGINING"]
+            logging.info("API_CONFIG: Initialization successful.")
+        except:
+            logging.error("API_CONFIG: Initialization error.")
+            print(Fore.RED+"API_CONFIG: Initialization error.")
+            sys.exit()
+            
+        try:
+            self.localhost_default_port = self.localhost_cfg["local_host"]["default_port"]
+            self.local_hosting_support = self.localhost_cfg["local_host"]["local_hosting_support"]
+            self.localhost_default_path = self.localhost_cfg["local_host"]["default_path"]
+            logging.info("LOCALHOST_CONFIG: Initialization successful.")
+        except:
+            logging.error("LOCALHOST_CONFIG: Initialization error.")
+            print(Fore.RED+"LOCALHOST_CONFIG: Initialization error.")
+            sys.exit()
+        
+        try:
+            self.session_id=random.randint(1,9999999)
+            logging.info(f"SESSION_ID: Initialization successful. ID: {self.session_id}")
+        except:
+            logging.error("SESSION_ID: Initialization error.")
+            print(Fore.RED+"SESSION_ID: Initialization error.")
+            sys.exit()
+        
+        try:
+            self.input_color = color_map.get(self.pers_cfg["CLI"]["input_color"], Fore.BLUE)
+            self.logo_color = color_map.get(self.pers_cfg["CLI"]["logo_color"], Fore.GREEN)
+            self.errors_color = color_map.get(self.pers_cfg["CLI"]["errors_color"], Fore.RED)
+            self.startmenu_color = color_map.get(self.pers_cfg["CLI"]["start_menu_color"], Fore.WHITE)
+            self.show_version=self.pers_cfg["CLI"]["show_version"]
+            logging.info("PERS_CONFIG: Initialization successful.")
+        except:
+            logging.error("PERS_CONFIG: Initialization error.")
+            print(Fore.RED+"PERS_CONFIG: Initialization error.")
+            sys.exit()    
+        
+        if SXServiseCLI.check_internet(self)==True:
+            logging.info("There is an Internet connection")
+        elif SXServiseCLI.check_internet(self)==False:
+            logging.warning("No internet connection.")
+        
+        logging.info("Initialization successful.")
+        
+        try:
+            if ctypes.windll.shell32.IsApplicationUserModelIDSupported():
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(self.app_com)
+            pass
+        except:
+            pass
+        finally:
+            if other=="run":
+                SXServiseCLI.run(self)
+            else:
+                SXServiseCLI.System.run_command(self, command=other)
+        
+    def check_internet(self):
+        try:
+            socket.create_connection(("www.google.com", 80), timeout=5)
+            return True
+        except OSError:
+            return False
+        
+    def create_folder_if_not_exists(self,folder_path):
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        else:
+            pass
+    
+    def check_and_create_json(self,file_name, data):
+        if not os.path.isfile(file_name):
+            with open(file_name, 'w') as json_file:
+                json.dump(data, json_file, indent=4)
+        else:
+            pass
+        
+    def save_user_data(self, full_name, nickname, email, password, need_password):
+        data = {
+            "fullname": full_name,
+            "nickname": nickname,
+            "password": password,
+            "mail": email,
+            "MODE": 0,
+            "need_password_": need_password
+        }
+        with open("System/configs/user.cfg.json", "w") as data_q:
+            json.dump(data, data_q)
+    
+    def run(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(self.logo_color+self.logo)
+        print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+        logging.info("CLI: Successfully launched.")
+        if self.user_cfg["fullname"]=="x" or self.user_cfg["nickname"]=="x" or self.user_cfg["mail"]=="x":
+            print(self.startmenu_color+"")
+            print(Fore.WHITE+"Registration in the application: ")
+            
+            full_name = Prompt.ask(Fore.WHITE + " - SXSCLI_AUTH: Enter your full name:", default="John Doe")
+            nickname = Prompt.ask(Fore.WHITE + " - SXSCLI_AUTH: Enter your nickname:", default="John")
+            email = Prompt.ask(Fore.WHITE + " - SXSCLI_AUTH: Enter your email:", default="example@example.com")
+            password = Prompt.ask(Fore.WHITE + " - SXSCLI_AUTH: Enter your password:", password=True)
+            np = Prompt.ask(Fore.WHITE + " - SXSCLI_AUTH: Would you like to ask for your password at startup? (Y/N):", default="Y")
+            
+            need_password = np.lower() == "y"
+            self.save_user_data(full_name, nickname, email, password, need_password)
+            print(" ")
+            print(Fore.GREEN+"Registration is successful!")
+            logging.info("CLI: Registration is successful.")
+            print(self.startmenu_color+" ")
+            SXServiseCLI.System.run_input(self)
+                
+        elif self.user_cfg["need_password_"]:
+            print(" ")
+            if str(input(self.input_color+" - Enter password: ")) == self.user_cfg["password"]:
+                print(" ")
+                print(self.startmenu_color+f" Welcome, {self.user_cfg['nickname']}!")
+                print(self.startmenu_color+" Do you need help? -> help")
+                print(self.startmenu_color+" All you need in one place")
+                print(" ")
+                SXServiseCLI.System.run_input(self)
+            else:
+                print(self.errors_color+" -> Incorrect password try again later!")
+                logging.warning("CLI: Incorrect password")
+                time.sleep(4)
+                sys.exit()
+                
+        else:
+            print(self.startmenu_color+f" Welcome, {self.user_cfg['nickname']}!")
+            print(self.startmenu_color+" Do you need help? -> help")
+            print(self.startmenu_color+" All you need in one place")
+            print(" ")
+            SXServiseCLI.System.run_input(self)
+    
+    class System:
+        
+        def pers(self):
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(self.logo_color + self.logo)
+            print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+            print(" ")
 
-def install_package(package_name):
-    print(">install package...")
-    print("plugin - 0")
-    print("package - 1")
-    command_install_pcg = int(input(Fore.BLUE + ">>> "))
-    if command_install_pcg == 0:
-        pass
-    elif command_install_pcg == 1:
-        pass
-    else:
-        print(Fore.RED + "Unknown command.")
-        error("Error code: 404. Unknown command", 1)
-        install_package()
+            print(f"""
+            Personalization:
+            - Logo color   -> {Fore.WHITE + self.pers_cfg["CLI"]["logo_color"]}
+            - Input color   -> {Fore.WHITE + self.pers_cfg["CLI"]["input_color"]}
+            - Errors color  -> {Fore.WHITE + self.pers_cfg["CLI"]["errors_color"]}
+            - Start menu color -> {Fore.WHITE + self.pers_cfg["CLI"]["start_menu_color"]}
+            - Show version -> {str(Fore.WHITE + str(self.pers_cfg["CLI"]["show_version"]))}
+            
+            Actions:
+            - Change colors -> custom -r -colors
+            - Change other  -> custom -r -other
+            - Return to menu -> return
+        """)
+            logging.info("Component PERS: Successfully launched.")
+            action = input(Fore.WHITE + " - Choose an action (colors/other/return): ").strip().lower()
 
-def input_command():
-    global file
-    global logs1
-    command = input(Fore.BLUE + ">>> ")
-    if command == command1:
-        text_to_write = f"{formatted_time} The help command is running\n"
-        file.write(text_to_write)
-        command_help()
-    elif command == command2:
-        text_to_write = f"{formatted_time} The login command is running\n"
-        file.write(text_to_write)
-        command_loginCL()
-    elif command == "login":
-        text_to_write = f"{formatted_time} The login command is running\n"
-        file.write(text_to_write)
-        command_loginCL()
-    elif command == command0:
-        text_to_write = f"{formatted_time} The exit command is running\n"
-        file.write(text_to_write)
-        file.close()
-        exit()
-    elif command == command3:
-        text_to_write = f"{formatted_time} The support command is running\n"
-        file.write(text_to_write)
-        command_support()
-    elif command == command4:
-        text_to_write = f"{formatted_time} The localhost command is running\n"
-        file.write(text_to_write)
-        command_localhost()
-    elif command == command5:
-        text_to_write = f"{formatted_time} The json command is running\n"
-        file.write(text_to_write)
-        command_json_menu()
-    elif command == command6:
-        text_to_write = f"{formatted_time} The qrcode command is running\n"
-        file.write(text_to_write)
-        command_qrcode_menu1()
-    elif command == command7:
-        text_to_write = f"{formatted_time} The qrcode command is running\n"
-        file.write(text_to_write)
-        command_qrcode_menu1()
-    elif command == command8:
-        text_to_write = f"{formatted_time} The ping command is running\n"
-        file.write(text_to_write)
-        host_to_ping = input("Enter the host to ping: ")
-        ping_host(host_to_ping)
-    elif command.startswith("sxg install"):
-        text_to_write = f"{formatted_time} The sxg install command is running\n"
-        file.write(text_to_write)
-        package_name = command[len("sxg install "):]
-        install_package(package_name)
-    elif command == command11:
-        text_to_write = f"{formatted_time} The http command is running\n"
-        file.write(text_to_write)
-        http_req_func()
-    elif command == command12:
-        text_to_write = f"{formatted_time} The https command is running\n"
-        file.write(text_to_write)
-        http_req_func()
-    elif command == command13:
-        text_to_write = f"{formatted_time} The dns command is running\n"
-        file.write(text_to_write)
-        check_host_av_func()
-    elif command == command14:
-        text_to_write = f"{formatted_time} The host command is running\n"
-        file.write(text_to_write)
-        host_command()
-    elif command == command15:
-        text_to_write = f"{formatted_time} The arduino command is running\n"
-        file.write(text_to_write)
-        print("Arduino module is not available in this version.")
-        input_command()
-    elif command == command16:
-        text_to_write = f"{formatted_time} The ai command is running\n"
-        file.write(text_to_write)
-        from Local.AI.aicommandfunc import aifuncc
-        aifuncc()
-    elif command == command17:
-        text_to_write = f"{formatted_time} The -SXServiseCLI Info- command is running\n"
-        file.write(text_to_write)
-        command_sxscinf()
-    elif command == "root":
-        text_to_write = f"{formatted_time} The -SXServiseCLI Root- command is running\n"
-        file.write(text_to_write)
-        root_menu()  
-    elif command == command19:
-        text_to_write = f"{formatted_time} The -SXServiseCLI CORE- command is running\n"
-        file.write(text_to_write)
-        core_command1()
-    elif command==command20:
-        text_to_write = f"{formatted_time} The CONTROL command is running\n"
-        file.write(text_to_write)
-        control_command()
-    elif command==command21:
-        text_to_write = f"{formatted_time} The PLAN command is running\n"
-        file.write(text_to_write)
-        sxservisecliTRPLAN()
-    elif command==command22:
-        text_to_write = f"{formatted_time} The ActivateLic command is running/n"
-        file.write(text_to_write)
-        activate_licension_key()
-    else:
-        print(Fore.RED + "Unknown command.")
-        error("Error code: 404. Unknown command", 1)
-        text_to_write = f"{formatted_time}" + command + "Unknown command.\n"
-        file.write(text_to_write)
-        text_to_write = f"{formatted_time} Error code: 404. Unknown command.\n"
-        file.write(text_to_write)
-        input_command()
+            if action == "colors":
+                logo_color = input(Fore.WHITE + " - Enter new logo color: ").strip().upper()
+                input_color = input(Fore.WHITE + " - Enter new input color: ").strip().upper()
+                errors_color = input(Fore.WHITE + " - Enter new errors color: ").strip().upper()
+                start_menu_color = input(Fore.WHITE + " - Enter new start menu color: ").strip().upper()
+
+                self.pers_cfg["CLI"]["logo_color"] = logo_color
+                self.pers_cfg["CLI"]["input_color"] = input_color
+                self.pers_cfg["CLI"]["errors_color"] = errors_color
+                self.pers_cfg["CLI"]["start_menu_color"] = start_menu_color
+                
+                with open("System/configs/personalization.cfg.json", "w") as pers_file:
+                    json.dump(self.pers_cfg, pers_file, indent=4)
+                
+                print(Fore.GREEN + "Colors updated successfully!")
+                SXServiseCLI.System.run_input(self)
+
+            elif action == "other":
+                show_version = input(Fore.WHITE + " - Show version at startup? (true/false): ").strip().lower()
+                self.pers_cfg["CLI"]["show_version"] = show_version == "true"
+                
+                with open("System/configs/personalization.cfg.json", "w") as pers_file:
+                    json.dump(self.pers_cfg, pers_file, indent=4)
+                
+                print(Fore.GREEN + "Settings updated successfully!")
+                logging.info("Component Pers: Settings updated successfully!")
+                SXServiseCLI.System.run_input(self)
+
+            elif action == "return":
+                SXServiseCLI.System.run_input(self)
+
+            else:
+                print(Fore.RED + " - 404. Command error.")
+                logging.error("Component Pers: 404. Command error.")
+                SXServiseCLI.System.run_input(self)
+        
+        def config(self):
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(self.logo_color + self.logo)
+            print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+            print(" ")
+            print(Fore.WHITE + " Welcome to SXSCLI:CONFIG!")
+            logging.info("Component CONFIG: Successfully launched.")
+            tree = Tree("[blue]Your Current Configuration:", style="bold green")
+            tree.box = box.SQUARE
+            tree.add("[cyan]Addons Configuration: [white]{}".format(path_addons_cfg))
+            tree.add("[cyan]API Configuration: [white]{}".format(path_api_cfg))
+            tree.add("[cyan]Localhost Configuration: [white]{}".format(path_localhost_cfg))
+            tree.add("[cyan]Personalization Configuration: [white]{}".format(path_pers_cfg))
+            tree.add("[cyan]System Configuration: [white]{}".format(path_system_cfg))
+            
+            self.console.print(tree)
+            print(" ")
+            SXServiseCLI.System.run_input(self)
+                
+        class CyberSecurity:
+            class cryption:
+                pass
+                
+            class pscan:
+                def scan_port(self, host, port):
+                    try:
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                            s.settimeout(1)
+                            result = s.connect_ex((host, port))
+                            if result == 0:
+                                logging.info(f"Component PORTSCAN: Port {port} is OPEN")
+                                return f" - Port {port} is OPEN"
+                            else:
+                                logging.info(f"Component PORTSCAN: Port {port} is CLOSED")
+                                return f" - Port {port} is CLOSED"
+                            
+                    except Exception as e:
+                        logging.error(f"Component PORTSCAN: Error scanning port {port}: {e}")
+                        return f" - Error scanning port {port}: {e}"
+
+                def scan_all_ports(self, host, log_path_res):
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+                        with open(log_path_res, "w", encoding='utf-8') as result_file:
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - SXSCLI: PORTSCAN - Domain: {host}\n")
+                            result_file.flush()
+                            ports = range(1, 65536)
+                            future_to_port = {executor.submit(SXServiseCLI.System.CyberSecurity.pscan.scan_port, self,host, port): port for port in ports}
+                            for future in concurrent.futures.as_completed(future_to_port):
+                                print(Fore.WHITE+"SXSCLI -> "+future.result())
+                                result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - {str(host)} - {future.result()}\n")
+                                result_file.flush()
+                    result_file.write(f"Thanks for using. \n")
+                    result_file.flush()
+                    result_file.write(f"Powered by SXServiseCLI. \n")
+                    result_file.flush()
+                    print(Fore.WHITE+f"Results saved: {log_path_res}")
+                    result_file.close()
+
+                def portscan_sxscli(self, target_host):
+                    result_path_whois = f"Staff/results/{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}_portcan_result.log"
+                    os.makedirs(os.path.dirname(result_path_whois), exist_ok=True)
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(Fore.WHITE + " - - - - - - - - SXSCLI: PORTSCAN - - - - - - - - ")
+                    print(" ")
+                    logging.info(f"Component PORTSCAN: Starting a port scan. Domain: {target_host}")
+                    
+                    try:
+                        print(Fore.WHITE + f"Scanning ports on {target_host}...")
+                        SXServiseCLI.System.CyberSecurity.pscan.scan_all_ports(self,target_host, result_path_whois)
+                    except Exception as e:
+                        print(Fore.RED + f"Error scanning ports: {e}")
+                        logging.error(f"Component PortScan: Error scanning ports. ERROR: {e}")
+                    finally:
+                        print(" ")
+                        print(Fore.WHITE + " - - - - - - - - - - - - - - - - - - - - - - - - - ")
+                        print(Fore.WHITE + " ")
+                        SXServiseCLI.System.run_input(self)
+
+                def main(self):
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(self.logo_color + self.logo)
+                    print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                    print(" ")
+                    print(Fore.WHITE + " Welcome to SXSCLI:PORTSCAN!")
+                    logging.info("Component PORTSCAN: Successfully launched.")
+                    target_host = input(Fore.WHITE + " - Enter host to scan (IP or domain)(or exit): ")
+                    if target_host.lower() == "exit":
+                        print(Fore.WHITE + " ")
+                        SXServiseCLI.System.run_input(self)
+                    else:
+                        print(Fore.WHITE + " ")
+                        SXServiseCLI.System.CyberSecurity.pscan.portscan_sxscli(self,target_host)
+
+            
+            class whois:
+                def whois_sxscli(self, domain):
+                    result_path_whois = f"Staff/results/{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}_whois_result.log"
+                    os.makedirs(os.path.dirname(result_path_whois), exist_ok=True)
+                    with open(result_path_whois, "w") as result_file:
+                        result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - SXSCLI_WHOIS: Domain: {domain}\n")
+                        result_file.flush()
+
+                        os.system('cls' if os.name == 'nt' else 'clear')
+                        print(Fore.WHITE + " - - - - - - - - SXSCLI: WHOIS - - - - - - - - ")
+                        logging.info(f"Component WHOIS: Getting information about a domain: {domain}")
+                        try:
+                            domain_info = whois.whois(domain)
+                            print(Fore.WHITE + "Domain WHOIS info:")
+                            for key, value in domain_info.items():
+                                print(Fore.WHITE + f" - {key}: {value}")
+                                result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Domain_Info: - {key}: {value}\n")
+                                result_file.flush()
+                        except Exception as e:
+                            logging.error(f"Component WHOIS: WHOIS error: {e}")
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Component WHOIS: WHOIS error: {e}\n")
+                            result_file.flush()
+                            print(self.errors_color + f"WHOIS error: {e}")
+
+                        # DNS Records
+                        try:
+                            print(Fore.WHITE + "\nDNS Records:")
+                            a_records = dns.resolver.resolve(domain, 'A')
+                            for a in a_records:
+                                print(Fore.WHITE + f" - A Record: {a}")
+                                result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - A Record: {a}\n")
+                                result_file.flush()
+
+                            mx_records = dns.resolver.resolve(domain, 'MX')
+                            for mx in mx_records:
+                                print(Fore.WHITE + f" - MX Record: {mx.exchange} Priority: {mx.preference}")
+                                result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - MX Record: {mx.exchange} Priority: {mx.preference}\n")
+                                result_file.flush()
+
+                            txt_records = dns.resolver.resolve(domain, 'TXT')
+                            for txt in txt_records:
+                                print(Fore.WHITE + f" - TXT Record: {txt.to_text()}")
+                                result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - TXT Record: {txt.to_text()}\n")
+                                result_file.flush()
+
+                            cname_record = dns.resolver.resolve(domain, 'CNAME')
+                            for cname in cname_record:
+                                print(Fore.WHITE + f" - CNAME Record: {cname}")
+                                result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - CNAME Record: {cname}\n")
+                                result_file.flush()
+                        except Exception as e:
+                            logging.error(f"Component WHOIS: DNS Record error: {e}")
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Component WHOIS: DNS Record error: {e}\n")
+                            result_file.flush()
+                            print(self.errors_color + f"DNS Record error: {e}")
+
+                        try:
+                            print(Fore.WHITE + "\nSSL Certificate:")
+                            context = ssl.create_default_context()
+                            with socket.create_connection((domain, 443)) as sock:
+                                with context.wrap_socket(sock, server_hostname=domain) as ssock:
+                                    cert = ssock.getpeercert()
+                                    print(Fore.WHITE + f" - Issuer: {cert['issuer']}")
+                                    print(Fore.WHITE + f" - Valid from: {cert['notBefore']}")
+                                    print(Fore.WHITE + f" - Valid until: {cert['notAfter']}")
+                                    print(Fore.WHITE + f" - Serial Number: {cert['serialNumber']}")
+                                    print(Fore.WHITE + f" - Signature Algorithm: {cert['signatureAlgorithm']}")
+                            
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Issuer: {cert['issuer']} - Valid from: {cert['notBefore']} - Valid until: {cert['notAfter']} - Serial Number: {cert['serialNumber']} - Signature Algorithm: {cert['signatureAlgorithm']}\n")
+                            result_file.flush()
+                        except Exception as e:
+                            logging.error(f"Component WHOIS: SSL error: {e}")
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Component WHOIS: SSL error: {e}\n")
+                            result_file.flush()
+                            print(self.errors_color + f"SSL error: {e}")
+
+                        try:
+                            print(Fore.WHITE + "\nEmail Security Records:")
+                            txt_records = dns.resolver.resolve(domain, 'TXT')
+                            for txt in txt_records:
+                                if 'v=spf' in txt.to_text():
+                                    print(Fore.WHITE + f" - SPF Record: {txt.to_text()}")
+                                    result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - SPF Record: {txt.to_text()}\n")
+                                    result_file.flush()
+                                if 'v=DMARC' in txt.to_text():
+                                    print(Fore.WHITE + f" - DMARC Record: {txt.to_text()}")
+                                    result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - DMARC Record: {txt.to_text()}\n")
+                                    result_file.flush()
+
+                            dkim_records = dns.resolver.resolve(f"{domain}._domainkey.{domain}", 'TXT')
+                            for dkim in dkim_records:
+                                print(Fore.WHITE + f" - DKIM Record: {dkim.to_text()}")
+                                result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - DKIM Record: {dkim.to_text()}\n")
+                                result_file.flush()
+                        except Exception as e:
+                            logging.error(f"Component WHOIS: Email Security Record error: {e}")
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Component WHOIS: Email Security Record error: {e}\n")
+                            result_file.flush()
+                            print(self.errors_color + f"Email Security Record error: {e}")
+
+                        result_file.write("Thanks for using.\n")
+                        result_file.write("Powered by SXServiseCLI.\n")
+                        result_file.flush()
+                        result_file.close()
+                        print(f"The results are saved: {result_path_whois}")
+                        print(Fore.WHITE + " - - - - - - - - - - - - - - - - - - - - - - - ")
+                        SXServiseCLI.System.run_input(self)
+                        
+                def main(self):
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(self.logo_color+self.logo)
+                    print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                    print(" ")
+                    print(Fore.WHITE+" Welcome to SXSCLI:WHOIS!")
+                    logging.info("Component WHOIS: Successfully launched.")
+                    domain = input(self.input_color+" - Enter domain name (Or exit): ")
+                    if domain.lower()=="exit":
+                        print(Fore.WHITE+" ")
+                        SXServiseCLI.System.run_input(self)
+                    else:
+                        print(Fore.WHITE+" ")
+                        SXServiseCLI.System.CyberSecurity.whois.whois_sxscli(self, domain)
+
+            
+        def upgrade(self):
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(self.logo_color+self.logo)
+            print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+            print(Fore.WHITE+" Welcome to SXSCLI:UPGRADE!")
+            logging.info("Component UPGRADE: Successfully launched.")
+            print(Fore.WHITE+f"""
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃                Welcome to the SXSCLI Upgrade Center!     ┃
+    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+    ┌─────────────────────────────────────────────────────────┐
+    │ Your Current Version:                                   │
+    │ SXSCLI - Version: {self.app_version}                             │
+    └─────────────────────────────────────────────────────────┘
+
+    🔹 Upgrades Available Just for You:
+       ────────────────────────────────────────────
+       1. SXSCLI+  ->   $2.99 
+          → Unlock advanced tools, faster speeds, and custom themes!
+       2. SXSCLI-Pro  ->   $7.99
+          → Gain access to exclusive modules, priority support, 
+             and the full suite of SXSCLI features!
+             
+    ┌─────────────────────────────────────────────────────────┐
+    │      Ready to Upgrade?                                  │
+    │   Visit the links below to learn more and upgrade:      │
+    └─────────────────────────────────────────────────────────┘
+    🌐 Official Website: https://sxcomp.42web.io/p/SXServiseCLI
+    🛒 Version Store: https://ko-fi.com/stasx/shop
+""")
+            SXServiseCLI.System.run_input(self)
+        
+        def help(self):
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(self.logo_color+self.logo)
+            print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+            print(Fore.WHITE+" Welcome to SXSCLI:HELP!")
+            logging.info("Component HELP: Successfully launched.")
+            print(Fore.WHITE+
+"""
+- - - - - - - - - - - - - - Global list of commands - - - - - - - - - - - - - -      < - - - Global* commands
+   help - Global list of commands
+   info - Assembly information
+   init - Initialize the application
+   support - Official technical support
+   pers - Personalization settings
+   config - Configuration settings
+   upgrade - Buy a better version
+ - - - - - - - - - - - - - - - - CYBER SECURITY - - - - - - - - - - - - - - - -      < - - - Dangerous* commands
+   whois - Domain check
+   pscan - Port scan
+ - - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - - - -     < - - - Internal tools 
+   ftp - File Transfer Protocol client (FTP)
+   ssh - Secure Shell protocol client (SSH)
+   ping - Ping server (PING)
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - Dangerous* - You take full responsibility for your actions
+  - Global* - System commands with CLI
+ Copyright (c) 2023-2024 Kozosvyst Stas (StasX) 
+""")
+            SXServiseCLI.System.run_input(self)
+        
+        def support(self):
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(self.logo_color+self.logo)
+            print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+            print(" ")
+            print(Fore.WHITE+" Welcome to SXSCLI:SUPPORT!")
+            logging.info("Component SUPPORT: Successfully launched.")
+            print(Fore.WHITE+
+"""
+Are you having problems?
+ - Problems with using: https://github.com/StasX-Official/SXServiseCLI/wiki
+ - Ideas for improvement and questions: https://github.com/StasX-Official/SXServiseCLI/discussions
+ - Report a vulnerability: https://github.com/StasX-Official/SXServiseCLI/pulls
+ - Report a violation: sxservise@outlook.com
+ - Other questions: sxservise@outlook.com
+
+We apologize for the inconvenience.
+Thank you for using.
+""")
+            SXServiseCLI.System.run_input(self)
+        
+        def info(self):
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(self.logo_color+self.logo)
+            print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+            print(" ")
+            print(Fore.WHITE+" Welcome to SXSCLI:INFO!")
+            logging.info("Component INFO: Successfully launched.")
+            try:
+                user_ip=str(socket.gethostbyname(socket.gethostname()))
+            except:
+                user_ip="ERROR"
+            finally:
+                print(Fore.WHITE+
+f"""- - - - - - - - - - - - - - - -  User Info - - - - - - - - - - - - - - - - - - -
+    Nickname - {self.user_cfg["nickname"]}
+    FullName - {self.user_cfg["fullname"]}
+    Mail - {self.user_cfg["mail"]}
+    IP - {user_ip} - Mode - {self.user_cfg["MODE"]}  
+- - - - - - - - - - - - - - - - - CLI Info - - - - - - - - - - - - - - - - - - -
+    CLI Name - {self.app_name} 
+    CLI Version - {self.app_version}
+    CLI ID - {self.app_id}
+    CLI COM - {self.app_com}
+    CLI API - {str(self.settings_api)}
+    CLI AuthAPI - {str(self.settings_AuthAPI)}
+    CLI ServisesAPI - {str(self.settings_ServisesAPI)}
+    - - - - - - - - - - - - - - - - - LINKS - - - - - - - - - - - - - - - - - -
+     - GitHub: https://github.com/StasX-Official/SXServiseCLI
+     - Official site: https://sxcomp.42web.io/p/SXServiseCLI
+     - Official wiki: https://github.com/StasX-Official/SXServiseCLI/wiki
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+""")
+            SXServiseCLI.System.run_input(self)
+            
+        class ping:
+            def ping(self,host):
+                param = "-n" if platform.system().lower() == "windows" else "-c"
+                command = ["ping", param, "4", host]
+                try:
+                    output = subprocess.check_output(command, stderr=subprocess.STDOUT, universal_newlines=True)
+                    print(f"Ping to {host} was successful.")
+                    print(output)
+                    print(" ")
+                    logging.info(f"Component PING: Ping to {host} was successful. Result: {output}")
+                    SXServiseCLI.System.run_input(self)
+                    
+                except subprocess.CalledProcessError as e:
+                    print(f"Ping to {host} failed.")
+                    print(e.output)
+                    print(" ")
+                    logging.error(f"Component PING: Ping to {host} failed.")
+                    SXServiseCLI.System.run_input(self)
+                    
+            def main(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color+self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(" ")
+                print(Fore.WHITE+" Welcome to SXSCLI:PING!")
+                logging.info("Component PING: Successfully launched.")
+                host = str(input(self.input_color+" - Enter Host to ping (or exit): "))
+                if host.lower()=="exit":
+                    print(Fore.WHITE+" ")
+                    SXServiseCLI.System.run_input(self)
+                else:
+                    print(Fore.WHITE+" ")
+                    SXServiseCLI.System.ping.ping(self, host)
+        
+        class ftp:
+            def run(self):
+                result_path_ftp = f"Staff/results/{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}_ftp_result.log"
+                os.makedirs(os.path.dirname(result_path_ftp), exist_ok=True)
+                with open(result_path_ftp, "w", encoding='utf-8') as result_file:
+                    try:
+                        os.system('cls' if os.name == 'nt' else 'clear')
+                        print(self.logo_color+self.logo)
+                        print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                        print(" ")
+                        print(Fore.WHITE+" Welcome to SXSCLI:FTP!")
+                        logging.info("Component FTP: Successfully launched.")
+                        ftp_host = str(input(self.input_color+" - Enter FTP Host: "))
+                        ftp_username = str(input(self.input_color+" - Enter FTP username: "))
+                        ftp_password = str(input(self.input_color+" - Enter FTP password: "))
+                        def connect_ftp(host, username, password):
+                            ftp = FTP(host)
+                            ftp.login(username, password)
+                            print(f"Successful connection to the FTP server")
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Successful connection to the FTP server. HOST: {ftp_host}\n")
+                            result_file.flush()
+                            logging.info(f"FTP: Successful connection to the FTP server. HOST: {ftp_host}")
+                            set_passive_mode(ftp)
+                            return ftp
+
+
+                        def set_passive_mode(ftp):
+                            ftp.set_pasv(True)
+
+
+                        def execute_ftp_command(ftp, command):
+                            result = ""
+
+                            if command.upper() == "QUIT":
+                                ftp.quit()
+                                result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Connection to the FTP server has been terminated. HOST: {ftp_host}\n")
+                                result_file.flush()
+                                print("Connection to the FTP server has been terminated.")
+                                input_command = command()
+                            elif command.upper() == "LIST":
+                                result = ftp.retrlines("LIST")
+                                print(f"Result of executing 'LIST' command:\n{result}")
+                            else:
+                                result = ftp.sendcmd(command)
+                                print(f"Result of executing '{command}': {result}")
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Result: {result}\n")
+                            result_file.flush()
+                            return result
+
+
+                        ftp_connection = connect_ftp(ftp_host, ftp_username, ftp_password)
+
+                        while True:
+                            user_input = input(self.input_color+"Enter the command to execute on FTP (QUIT to exit): ")
+                            logging.info(f"FTP: The user launched the command: {user_input}")
+                            result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - The user launched the command: {user_input}\n")
+                            result_file.flush()
+                            execute_ftp_command(ftp_connection, user_input)
+                    except:
+                        print(self.errors_color+"Error connecting to the FTP server.")
+                        logging.error(f"FTP: Error connecting to the FTP server.")
+                        result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Error connecting to the FTP server. HOST: {ftp_host}\n")
+                        result_file.flush()
+                    finally:
+                        print(" ")
+                        result_file.write(f"Thanks for using!\n")
+                        result_file.write(f"Powered by SXServiseCLI!\n")
+                        result_file.flush()
+                        result_file.close()
+                        SXServiseCLI.System.run_input(self)
+                    
+                 
+        class ssh:
+            def run(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color+self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(" ")
+                print(Fore.WHITE+" Welcome to SXSCLI:SSH!") 
+                logging.info("Component SSH: Successfully launched.")
+                print(" ")
+                if str(input(Fore.WHITE+"Do you want to continue? (connect/exit) >>> ")).lower()=="exit":
+                    SXServiseCLI.System.run_input(self)
+                    
+                ssh_host = str(input(self.input_color+" - Enter SSH Host: "))
+                ssh_username = str(input(self.input_color+" - Enter SSH Username: "))
+                ssh_password = getpass(self.input_color+" - Enter SSH Password: ")
+
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+                try:
+                    ssh.connect(ssh_host, username=ssh_username, password=ssh_password)
+                    print(Fore.LIGHTGREEN_EX+f"Successful connection to {ssh_host}\n")
+                    logging.info(f"SSH: Successful connection to {ssh_host}")
+
+                    while True:
+                        command = input(self.input_color+"Enter the command (or 'help' for available commands, 'exit' to quit): ")
+                        logging.info(f"SSH: The user launched the command: {command}")
+
+                        if command.lower() == "exit":
+                            break
+
+                        elif command.lower() == "help":
+                            print(Fore.LIGHTGREEN_EX + """Available commands:
+  help            - Show this help message
+  exit            - Exit the SSH session
+  ls              - List directory contents
+  pwd             - Print the current working directory
+  whoami          - Show the current user
+  df              - Show disk space usage
+  uptime          - Show how long the system has been running
+  free            - Show memory usage
+  uname           - Show system information
+  top             - Display system processes
+  date            - Show the current date and time
+  df -i           - Show inode usage
+  grep            - Search for a pattern in files
+  find            - Search for files in a directory hierarchy
+  cat             - Concatenate and display file content
+  head            - Show the first few lines of a file
+  tail            - Show the last few lines of a file
+  man             - Show the manual for a command
+  chmod           - Change file permissions
+  chown           - Change file owner and group
+  ps              - Display information about active processes
+  kill            - Kill a process by ID
+  tar             - Archive files
+  df -h           - Show human-readable disk space usage
+  lsof            - List open files
+  history         - Show command history
+  ifconfig        - Display network configuration
+  ip              - Show or manipulate routing, devices, policy routing, and tunnels
+  netstat         - Print network connections, routing tables, interface statistics
+  ssh-keygen      - Generate a new SSH key pair
+  curl            - Transfer data from or to a server
+  wget            - Retrieve files from the web
+  top -o          - Sort top output by a specific field (e.g., %MEM)
+  df -T           - Show filesystem type
+  du              - Show disk usage of files and directories
+  dd              - Convert and copy files
+  lsblk           - List information about block devices
+  mount           - Mount a filesystem
+  umount          - Unmount a filesystem
+  systemctl       - Control the systemd system and service manager
+  journalctl      - Query and display messages from the journal
+  crontab         - Manage cron jobs
+  rsync           - Sync files and directories
+  chmod +x        - Make a script executable
+  stat            - Display file or file system status
+  df -hT          - Show human-readable filesystem type
+  du -sh          - Show disk usage in human-readable format
+  find /path -exec cmd {} \\; - Execute a command on files found
+  du -a           - Show disk usage of all files
+  sort            - Sort lines of text files
+  awk             - Pattern scanning and processing language
+  sed             - Stream editor for filtering and transforming text
+  head -n         - Show the first n lines of a file
+  tail -n         - Show the last n lines of a file
+  wget -O         - Download file and save with a specific name
+  curl -o         - Download file and save with a specific name
+  touch           - Create an empty file or update file timestamps
+  echo            - Display a line of text
+  diff            - Compare files line by line
+  file            - Determine file type
+  xargs           - Build and execute command lines from standard input
+  gzip            - Compress files
+  gunzip          - Decompress files
+  bzip2           - Compress files using bzip2
+  bunzip2         - Decompress files using bzip2
+  mkdir           - Create a new directory
+  rm              - Remove a file or directory
+  mv              - Move or rename files
+  cp              - Copy files or directories
+  alias           - Create or view command aliases
+  unalias         - Remove a command alias
+  hostname        - View or change the hostname
+  traceroute      - Trace the route to a host
+  ping            - Check the availability of a host
+  df -h --total   - Show the total disk space usage
+  ssh-copy-id     - Copy SSH key to a server
+  nano            - Edit files using the Nano editor
+  vim             - Edit files using the Vim editor
+  du -m           - Show disk usage in megabytes
+  tree            - Show directory structure as a tree
+  locate          - Find files on the server
+  last            - Show the last users who logged in
+  uptime -p       - Show the system uptime in a compact format
+  uptime -s       - Show when the system was started
+  dmesg           - View kernel system messages
+  clear           - Clear the terminal screen
+  tac             - Display a file in reverse order (last line to first)
+  ln              - Create symbolic or hard links
+  shutdown        - Perform a system shutdown
+  reboot          - Reboot the system
+  Any other command will be executed on the server
+""")
+
+                            continue
+                        
+                        elif command.lower() == "mkdir":
+                            dir_name = input(Fore.LIGHTGREEN_EX+"Enter directory name to create: ")
+                            command = f"mkdir {dir_name}"
+                        
+                        elif command.lower() == "rm":
+                            path = input(Fore.LIGHTGREEN_EX+"Enter file or directory to remove: ")
+                            command = f"rm -r {path}"
+                        
+                        elif command.lower() == "mv":
+                            src = input(Fore.LIGHTGREEN_EX+"Enter source file or directory: ")
+                            dest = input(Fore.LIGHTGREEN_EX+"Enter destination: ")
+                            command = f"mv {src} {dest}"
+                        
+                        elif command.lower() == "cp":
+                            src = input(Fore.LIGHTGREEN_EX+"Enter source file or directory: ")
+                            dest = input(Fore.LIGHTGREEN_EX+"Enter destination: ")
+                            command = f"cp -r {src} {dest}"
+                        
+                        elif command.lower() == "alias":
+                            command_name = input(Fore.LIGHTGREEN_EX+"Enter alias command: ")
+                            command = f"alias {command_name}"
+                            
+                        elif command.lower() == "unalias":
+                            alias_name = input(Fore.LIGHTGREEN_EX+"Enter alias to remove: ")
+                            command = f"unalias {alias_name}"
+                        
+                        elif command.lower() == "hostname":
+                            command = "hostname"
+                        
+                        elif command.lower() == "traceroute":
+                            target = input(Fore.LIGHTGREEN_EX+"Enter target host: ")
+                            command = f"traceroute {target}"
+
+                        elif command.lower() == "ping":
+                            target = input(Fore.LIGHTGREEN_EX+"Enter target host: ")
+                            command = f"ping -c 4 {target}"
+
+                        elif command.lower() == "df -h --total":
+                            command = "df -h --total"
+
+                        elif command.lower() == "ssh-copy-id":
+                            user_host = input(Fore.LIGHTGREEN_EX+"Enter user@host: ")
+                            command = f"ssh-copy-id {user_host}"
+
+                        elif command.lower() == "nano":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to edit: ")
+                            command = f"nano {file}"
+                            
+                        elif command.lower() == "vim":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to edit: ")
+                            command = f"vim {file}"
+
+                        elif command.lower() == "du -m":
+                            directory = input(Fore.LIGHTGREEN_EX+"Enter directory to check usage: ")
+                            command = f"du -m {directory}"
+
+                        elif command.lower() == "tree":
+                            command = "tree"
+
+                        elif command.lower() == "locate":
+                            filename = input(Fore.LIGHTGREEN_EX+"Enter filename to locate: ")
+                            command = f"locate {filename}"
+
+                        elif command.lower() == "last":
+                            command = "last"
+
+                        elif command.lower() == "uptime -p":
+                            command = "uptime -p"
+                        
+                        elif command.lower() == "uptime -s":
+                            command = "uptime -s"
+                        
+                        elif command.lower() == "dmesg":
+                            command = "dmesg"
+                        
+                        elif command.lower() == "clear":
+                            command = "clear"
+                        
+                        elif command.lower() == "ln":
+                            target = input(Fore.LIGHTGREEN_EX+"Enter target file: ")
+                            link_name = input(Fore.LIGHTGREEN_EX+"Enter name for the link: ")
+                            command = f"ln -s {target} {link_name}"
+                        
+                        elif command.lower() == "shutdown":
+                            command = "shutdown now"
+                        
+                        elif command.lower() == "reboot":
+                            command = "reboot"
+
+                        elif command.lower() == "ls":
+                            command = "ls -la"
+
+                        elif command.lower() == "pwd":
+                            command = "pwd"
+
+                        elif command.lower() == "whoami":
+                            command = "whoami"
+
+                        elif command.lower() == "df":
+                            command = "df -h"
+
+                        elif command.lower() == "uptime":
+                            command = "uptime"
+
+                        elif command.lower() == "free":
+                            command = "free -h"
+
+                        elif command.lower() == "uname":
+                            command = "uname -a"
+
+                        elif command.lower() == "top":
+                            command = "top -bn1"
+
+                        elif command.lower() == "date":
+                            command = "date"
+
+                        elif command.lower() == "df -i":
+                            command = "df -i"
+
+                        elif command.lower() == "grep":
+                            pattern = input(Fore.LIGHTGREEN_EX+"Enter pattern to search: ")
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to search in: ")
+                            command = f"grep '{pattern}' {file}"
+
+                        elif command.lower() == "find":
+                            directory = input(Fore.LIGHTGREEN_EX+"Enter directory to search in: ")
+                            search = input(Fore.LIGHTGREEN_EX+"Enter file or pattern to search for: ")
+                            command = f"find {directory} -name {search}"
+
+                        elif command.lower() == "cat":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to display: ")
+                            command = f"cat {file}"
+
+                        elif command.lower() == "head":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to display: ")
+                            lines = input(Fore.LIGHTGREEN_EX+"Enter number of lines to display: ")
+                            command = f"head -n {lines} {file}"
+
+                        elif command.lower() == "tail":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to display: ")
+                            lines = input(Fore.LIGHTGREEN_EX+"Enter number of lines to display: ")
+                            command = f"tail -n {lines} {file}"
+
+                        elif command.lower() == "man":
+                            cmd = input(Fore.LIGHTGREEN_EX+"Enter command to display manual: ")
+                            command = f"man {cmd}"
+
+                        elif command.lower() == "chmod":
+                            permissions = input(Fore.LIGHTGREEN_EX+"Enter permissions (e.g., 755): ")
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to change permissions: ")
+                            command = f"chmod {permissions} {file}"
+
+                        elif command.lower() == "chown":
+                            owner = input(Fore.LIGHTGREEN_EX+"Enter new owner: ")
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to change owner: ")
+                            command = f"chown {owner} {file}"
+
+                        elif command.lower() == "ps":
+                            command = "ps aux"
+
+                        elif command.lower() == "kill":
+                            pid = input(Fore.LIGHTGREEN_EX+"Enter process ID to kill: ")
+                            command = f"kill {pid}"
+
+                        elif command.lower() == "tar":
+                            options = input(Fore.LIGHTGREEN_EX+"Enter tar options (e.g., -czvf): ")
+                            archive = input(Fore.LIGHTGREEN_EX+"Enter archive name: ")
+                            files = input(Fore.LIGHTGREEN_EX+"Enter files to archive: ")
+                            command = f"tar {options} {archive} {files}"
+
+                        elif command.lower() == "df -h":
+                            command = "df -h"
+
+                        elif command.lower() == "lsof":
+                            command = "lsof"
+
+                        elif command.lower() == "history":
+                            command = "history"
+
+                        elif command.lower() == "ifconfig":
+                            command = "ifconfig"
+
+                        elif command.lower() == "ip":
+                            command = "ip a"
+
+                        elif command.lower() == "netstat":
+                            command = "netstat -tuln"
+
+                        elif command.lower() == "ssh-keygen":
+                            command = "ssh-keygen"
+
+                        elif command.lower() == "curl":
+                            url = input(Fore.LIGHTGREEN_EX+"Enter URL: ")
+                            command = f"curl {url}"
+
+                        elif command.lower() == "wget":
+                            url = input(Fore.LIGHTGREEN_EX+"Enter URL: ")
+                            command = f"wget {url}"
+
+                        elif command.lower() == "top -o":
+                            field = input(Fore.LIGHTGREEN_EX+"Enter field to sort by (e.g., %MEM): ")
+                            command = f"top -o {field}"
+
+                        elif command.lower() == "df -T":
+                            command = "df -T"
+
+                        elif command.lower() == "du":
+                            directory = input(Fore.LIGHTGREEN_EX+"Enter directory to check usage: ")
+                            command = f"du -sh {directory}"
+
+                        elif command.lower() == "touch":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to create or update: ")
+                            command = f"touch {file}"
+
+                        elif command.lower() == "echo":
+                            text = input(Fore.LIGHTGREEN_EX+"Enter text to display: ")
+                            command = f"echo {text}"
+
+                        elif command.lower() == "diff":
+                            file1 = input(Fore.LIGHTGREEN_EX+"Enter first file to compare: ")
+                            file2 = input(Fore.LIGHTGREEN_EX+"Enter second file to compare: ")
+                            command = f"diff {file1} {file2}"
+
+                        elif command.lower() == "file":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to determine type: ")
+                            command = f"file {file}"
+
+                        elif command.lower() == "xargs":
+                            cmd = input(Fore.LIGHTGREEN_EX+"Enter command to execute: ")
+                            command = f"xargs {cmd}"
+
+                        elif command.lower() == "gzip":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to compress: ")
+                            command = f"gzip {file}"
+
+                        elif command.lower() == "gunzip":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to decompress: ")
+                            command = f"gunzip {file}"
+
+                        elif command.lower() == "bzip2":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to compress: ")
+                            command = f"bzip2 {file}"
+
+                        elif command.lower() == "bunzip2":
+                            file = input(Fore.LIGHTGREEN_EX+"Enter file to decompress: ")
+                            command = f"bunzip2 {file}"
+
+                        stdin, stdout, stderr = ssh.exec_command(command)
+                        output = stdout.read().decode("utf-8")
+                        error = stderr.read().decode("utf-8")
+
+                        if output:
+                            print(Fore.LIGHTGREEN_EX + output)
+                            logging.info(f"SSH: The component provided the response: {output}")
+                        if error:
+                            print(Fore.RED + error)
+                            logging.error(f"SSH: The component has given an error: {error}")
+
+                except Exception as e:
+                    print(self.errors_color+f"Error connecting to the SSH server: {e}")
+                    print(" ")
+                    logging.error(f"Error connecting to the SSH server: {e}")
+                    SXServiseCLI.System.run_input(self)
+                
+                finally:
+                    print(" ")
+                    SXServiseCLI.System.run_input(self)
+        
+        def run_command(self, command):
+            logging.info("Launching the component: Entering the command")
+            try:
+                if command.lower() == "exit":
+                    time.sleep(1)
+                    sys.exit()
+                elif command.lower() == "ssh":
+                    SXServiseCLI.System.ssh.run(self)
+                elif command.lower() == "ftp":
+                    SXServiseCLI.System.ftp.run(self)
+                elif command.lower() == "help":
+                    SXServiseCLI.System.help(self)
+                elif command.lower() == "info":
+                    SXServiseCLI.System.info(self)
+                elif command.lower() == "support":
+                    SXServiseCLI.System.support(self)
+                elif command.lower() == "init":
+                    SXServiseCLI("run")
+                elif command.lower() == "config":
+                    SXServiseCLI.System.config(self)
+                elif command.lower() == "pers":
+                    SXServiseCLI.System.pers(self)
+                elif command.lower() == "whois":
+                    SXServiseCLI.System.CyberSecurity.whois.main(self)
+                elif command.lower() == "pscan":
+                    SXServiseCLI.System.CyberSecurity.pscan.main(self)
+                elif command.lower() == "upgrade":
+                    SXServiseCLI.System.upgrade(self)
+                elif command.lower() == "ping":
+                    SXServiseCLI.System.ping.main(self)
+                else:
+                    print(self.errors_color+" - 404. Command not found. ")
+                    logging.error(f"404. Command: {command} not found.")
+                    SXServiseCLI.System.run_input(self)
+            except Exception as e:
+                print(self.errors_color+f" - Error: {e}")
+                logging.error(f"Error: {e}")
+                SXServiseCLI.System.run_input(self)
+        
+        def run_input(self):
+            try:
+                cmd=input(self.input_color+" $ >>> ")
+                SXServiseCLI.System.run_command(self, command=cmd) 
+            except:
+                print(self.errors_color+" - Input command error. ")
+                logging.critical("Input command error")
+                time.sleep(5)
+                sys.exit()

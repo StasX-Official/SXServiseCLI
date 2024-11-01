@@ -1,0 +1,30 @@
+Copyright Notice
+
+© 2023-2024 StasX. All rights reserved.
+
+Software Title: SXServiseCLI
+
+Author: Kozosvyst Stas (Pseudonym: StasX)
+
+Description: SXServiseCLI is a software tool developed by Kozosvyst Stas, offering both free and paid versions 
+with various functionalities related to cybersecurity, network analysis, and more.
+
+Copyright Information:
+
+All content, code, and materials related to SXServiseCLI are protected by copyright law. Unauthorized use, reproduction, 
+distribution, or modification of the software or any of its components is prohibited without explicit permission from the 
+copyright holder.
+
+Trademark Notice:
+
+SXServiseCLI and the associated logo are trademarks of Kozosvyst Stas. All other trademarks and registered trademarks are 
+the property of their respective owners.
+
+Contact Information:
+
+For inquiries related to copyright or other legal matters, please contact the author at: stax.official.xx@gmail.com.
+
+Disclaimer:
+
+This copyright notice does not grant any rights to use, copy, or distribute the software beyond the scope of the license 
+terms provided. All rights not expressly granted herein are reserved.

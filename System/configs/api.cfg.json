@@ -1,0 +1,23 @@
+{
+    "app_api_settings": {
+        "Auth_Control_API_path": "/api/sxservisecli/app/authcontrol",
+        "Version_Control_API_path": "/api/sxservisecli/app/versioncontrol",
+        "Cloud_Control_API_path": "/api/sxservisecli/app/cloudcontrol",
+        "Analytics_Control_API_path": "/api/sxservisecli/app/analyticscontrol",
+        "Servise_Status_API_path": "/api/sxservisecli/app/servisestatus",
+        "Settings": {
+            "Security": {
+                "AUTH": true,
+                "SSL": true
+            },
+            "MetodsSupport": {
+                "GET": true,
+                "POST": true,
+                "PUT": true,
+                "DELETE": false,
+                "Others": true
+            },
+            "API_STATUSES_LOGGINING": true
+        }
+    }
+}

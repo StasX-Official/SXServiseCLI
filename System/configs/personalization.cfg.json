@@ -1,0 +1,9 @@
+{
+    "CLI": {
+        "logo_color": "PINK",
+        "input_color": "BLUE",
+        "errors_color": "RED",
+        "start_menu_color": "WHITE",
+        "show_version": true
+    }
+}

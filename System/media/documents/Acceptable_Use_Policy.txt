@@ -1,0 +1,33 @@
+Acceptable Use Policy
+Introduction
+This Acceptable Use Policy ("Policy") outlines the permissible and prohibited uses of the SXServiseCLI application ("the Application"). By using the Application, you agree to comply with this Policy.
+
+Permitted Use
+The Application is designed for legitimate purposes, including but not limited to:
+ - Cybersecurity analysis and monitoring
+ - FTP, SSH, and port checking
+ - Network and domain verification
+ - Database management
+
+Open Source and Modifications
+The Application is open-source, and users are allowed to modify and customize the code. However, the following restrictions apply:
+ - You may not modify or tamper with the API, services, or the core structure of the Application.
+ - All modifications should comply with this Policy and the other applicable terms.
+
+Prohibited Use
+You may not use the Application in any way that:
+ - Violates any applicable local, state, national, or international law or regulation
+ - Engages in illegal or unauthorized activities, including but not limited to hacking, unauthorized access, or distribution of malicious software
+ - Attempts to interfere with or compromise the security or integrity of any network, server, or system
+ - Distributes, shares, or resells the paid version of the Application without proper authorization
+
+Disclaimer of Liability
+The creators of the Application are not responsible for any misuse or illegal activities conducted using the Application. Users are fully responsible for their actions and must ensure compliance with all relevant laws.
+
+Enforcement
+Violation of this Policy may result in termination of your access to the Application without notice and potential legal action.
+
+Amendments
+This Policy may be updated from time to time. Users are encouraged to review it periodically to stay informed of any changes.
+
+© 2023-2024 StasX. All rights reserved.

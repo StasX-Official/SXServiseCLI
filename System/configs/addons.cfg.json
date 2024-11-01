@@ -1,0 +1,49 @@
+{
+    "app_addons": {
+        "addons_support_status": true,
+        "addons_user_auth_system_status": true,
+        "addons_need_user_plan_to_run": "FREE",
+        "SXSC-Security": {
+            "addons_pack_name": "SXSC-Security",
+            "addon_pack_id": "8348288418",
+            "addons_pack_version": "v0.0.1",
+            "addons_pack_path": "System/addons/SXSC_Security",
+            "addons_pack_status_active": true
+        },
+        "SXSC-Analytics": {
+            "addons_pack_name": "SXSC-Analytics",
+            "addon_pack_id": "5124671104",
+            "addons_pack_version": "v0.0.1",
+            "addons_pack_path": "System/addons/SXSC_Analytics",
+            "addons_pack_status_active": false
+        },
+        "SXSC-Optimizer": {
+            "addons_pack_name": "SXSC-Optimizer",
+            "addon_pack_id": "6656732359",
+            "addons_pack_version": "v0.0.1",
+            "addons_pack_path": "System/addons/SXSC_Optimizer",
+            "addons_pack_status_active": false
+        },
+        "SXSC-Monitoring": {
+            "addons_pack_name": "SXSC-Monitoring",
+            "addon_pack_id": "7179827845",
+            "addons_pack_version": "v0.0.1",
+            "addons_pack_path": "System/addons/SXSC_Monitoring",
+            "addons_pack_status_active": false
+        },
+        "SXSC-Integration": {
+            "addons_pack_name": "SXSC-Integration",
+            "addon_pack_id": "6852291107",
+            "addons_pack_version": "v0.0.1",
+            "addons_pack_path": "System/addons/SXSC_Integration",
+            "addons_pack_status_active": false
+        },
+        "SXSC-Storage": {
+            "addons_pack_name": "SXSC-Storage",
+            "addon_pack_id": "2496209993",
+            "addons_pack_version": "v0.0.1",
+            "addons_pack_path": "System/addons/SXSC_Storage",
+            "addons_pack_status_active": true
+        }
+    }
+}

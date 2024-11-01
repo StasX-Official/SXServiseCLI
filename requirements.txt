@@ -1,0 +1,8 @@
+colorama
+cryptography
+tqdm
+paramiko
+pycryptodome
+rich
+python-whois
+dnspython

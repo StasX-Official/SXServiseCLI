@@ -1,0 +1,20 @@
+{
+    "appName": "SXServiseCLI",
+    "version": "v6.7.2024",
+    "id": "SXSERVISECLIGLOBALFREE",
+    "com": "github.sxservise.sxcomp.42web.io",
+    "author": "StasX and SX",
+    "description": "SXServiseCLI - Beta version",
+    "license": "LICENSE.md",
+    "license2": "SX",
+    "settings": {
+        "api": true,
+        "api_path": "api.sxcomp.42web.io",
+        "logs": true,
+        "AuthAPI": true,
+        "ServisesAPI": true
+    },
+    "STAFF":{
+        "path":"Staff"
+    }
+}

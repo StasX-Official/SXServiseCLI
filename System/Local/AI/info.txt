@@ -1,5 +1,0 @@
-ENG
-The AI ​​module for SXServiseCLI is currently under development and not available in the app.
--
-UA
-На данний момент модуль AI для SXServiseCLI перебуває у розробці, та не доступний у додатку.
