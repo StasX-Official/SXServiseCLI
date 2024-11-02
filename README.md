@@ -23,6 +23,7 @@ System Requirements:
  - Required Dependencies: All necessary dependencies are included in the installation instructions.
     
 Instruction (Installation):
+ - git clone https://github.com/StasX-Official/SXServiseCLI.git
  - pip install -r requirements.txt
  - python sxscli.py init
    
