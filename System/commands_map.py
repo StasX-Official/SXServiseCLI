@@ -10,5 +10,17 @@ commands_map = {
     "whois": "whois",
     "pscan": "pscan",
     "ping": "ping",
-    "upgrade": "upgrade"
+    "upgrade": "upgrade",
+    "genai":"genai",
+    "device": "device",
+    "faker": "faker",
+    "netmon": "netmon",
+    "ai": "ai",
+    "ip":"ip",
+    "clear": "clear",
+    "mac": "mac",
+    "db": "db",
+    "networkinfo": "networkinfo",
+    "about":"about"
 }
+command_list=["ssh", "ftp", "init", "help", "info", "support", "pers", "config", "whois", "pscan", "ping", "upgrade", "genai", "device", "faker","netmon","ai","ip","clear","mac","db","networkinfo","about"]

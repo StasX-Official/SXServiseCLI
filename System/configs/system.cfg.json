@@ -12,7 +12,8 @@
         "api_path": "api.sxcomp.42web.io",
         "logs": true,
         "AuthAPI": true,
-        "ServisesAPI": true
+        "ServisesAPI": true,
+        "database_path":"Staff/databases/"
     },
     "STAFF":{
         "path":"Staff"

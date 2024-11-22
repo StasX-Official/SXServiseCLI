@@ -3,19 +3,13 @@ import sys
 import os
 import time
 from ftplib import FTP
-from tqdm import tqdm
 import random
-import paramiko
+import psutil
+import GPUtil
+import uuid
 import os
-from cryptography.fernet import Fernet
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad, unpad
-from Crypto.Random import get_random_bytes
-from getpass import getpass
-import ctypes
-from colorama import Fore
-from System.media.logo import sxscli_logo_
-from System.color_map import color_map
+import ctypes,faker
+from colorama import Fore, init
 import socket
 import whois
 import dns.resolver
@@ -23,19 +17,46 @@ import ssl
 import concurrent.futures
 import logging
 import platform
+import mysql.connector
+import sqlite3
 import subprocess
 from datetime import datetime
-from System.cfg_path_map import path_addons_cfg, path_api_cfg, path_system_cfg, path_localhost_cfg, path_user_cfg, path_pers_cfg
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.tree import Tree
+from rich.panel import Panel
+from rich.table import Table
 from rich import box
-import colorama
-colorama.init(autoreset=True)
+import google.generativeai as genai
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import WordCompleter
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+from System.media.logo import sxscli_logo_
+from System.color_map import color_map
+from System.commands_map import command_list
+from System.cfg_path_map import path_addons_cfg, path_api_cfg, path_system_cfg, path_localhost_cfg, path_user_cfg, path_pers_cfg
+from System import sxscli_core
+from System.genai_core import SXSCLI_GENAI
+from System.faker_core import SXSCLI_Faker
+from System.project_core import SXSCLI_Project
+from System.sxscli_web_core import AI_WITH_WEB_INTERFACE
+
+try:
+    import paramiko
+except:
+    ssh_status=False
+init(autoreset=True)
 
 class SXServiseCLI:
     def __init__(self, other):
-        
         self.console = Console()
         
         with open(path_addons_cfg, 'r') as cache_ootgg2:
@@ -55,8 +76,18 @@ class SXServiseCLI:
         
         with open(path_pers_cfg, "r") as cache_gksjnqfqq:
             self.pers_cfg = json.load(cache_gksjnqfqq)
-
             
+        with open("System\default\genai_d_s.json", "r") as cache_def_json_ga:
+            self.genai_def_settings = json.load(cache_def_json_ga)
+
+        self.cli_commands_list=command_list
+        
+        if self.pers_cfg["CLI"]["command_autocompletion"]==False:
+            self.sxscli_completer_status = False
+        else:
+            self.sxscli_completer_status = True
+            self.completer = WordCompleter(self.cli_commands_list, ignore_case=True)
+        
         self.logo=sxscli_logo_
         cont_debug_json={
     "debug_status": False,
@@ -72,6 +103,8 @@ class SXServiseCLI:
         SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/results")
         SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/projects")
         SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/dlc")
+        SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/ai")
+        SXServiseCLI.create_folder_if_not_exists(self, self.staff_path+"/databases")
         SXServiseCLI.check_and_create_json(self, self.staff_path+"/debug.json", cont_debug_json)
         with open("Staff\debug.json","r") as cache_fdfdfqqqqq:
             self.debug_cfg = json.load(cache_fdfdfqqqqq)        
@@ -128,8 +161,8 @@ class SXServiseCLI:
             self.settings_AuthAPI = self.system_cfg["settings"]["AuthAPI"]
             self.settings_ServisesAPI = self.system_cfg["settings"]["ServisesAPI"]
             logging.info("SETTINGS_CONFIG: Initialization successful.")
-        except:
-            logging.error("SETTINGS_CONFIG: Initialization error.")
+        except Exception as e:
+            logging.error(f"SETTINGS_CONFIG: Initialization error. {e}")
             print(Fore.RED+"SETTINGS_CONFIG: Initialization error.")
             sys.exit()
         
@@ -144,8 +177,8 @@ class SXServiseCLI:
             self.addons_SXSC_Integration = self.addons_cfg["app_addons"]["SXSC-Integration"]
             self.addons_SXSC_Storage = self.addons_cfg["app_addons"]["SXSC-Storage"]
             logging.info("ADDONS_CONFIG: Initialization successful.")
-        except:
-            logging.error("ADDONS_CONFIG: Initialization error.")
+        except Exception as e:
+            logging.error(f"ADDONS_CONFIG: Initialization error. {e}")
             print(Fore.RED+"ADDONS_CONFIG: Initialization error.")
             sys.exit()
         
@@ -164,8 +197,8 @@ class SXServiseCLI:
             self.api_settings_methods_support_others = self.api_cfg["app_api_settings"]["Settings"]["MetodsSupport"]["Others"]
             self.api_statuses_logging = self.api_cfg["app_api_settings"]["Settings"]["API_STATUSES_LOGGINING"]
             logging.info("API_CONFIG: Initialization successful.")
-        except:
-            logging.error("API_CONFIG: Initialization error.")
+        except Exception as e:
+            logging.error(f"API_CONFIG: Initialization error. {e}")
             print(Fore.RED+"API_CONFIG: Initialization error.")
             sys.exit()
             
@@ -174,36 +207,61 @@ class SXServiseCLI:
             self.local_hosting_support = self.localhost_cfg["local_host"]["local_hosting_support"]
             self.localhost_default_path = self.localhost_cfg["local_host"]["default_path"]
             logging.info("LOCALHOST_CONFIG: Initialization successful.")
-        except:
-            logging.error("LOCALHOST_CONFIG: Initialization error.")
+        except Exception as e:
+            logging.error(f"LOCALHOST_CONFIG: Initialization error. {e}")
             print(Fore.RED+"LOCALHOST_CONFIG: Initialization error.")
             sys.exit()
         
         try:
             self.session_id=random.randint(1,9999999)
             logging.info(f"SESSION_ID: Initialization successful. ID: {self.session_id}")
-        except:
-            logging.error("SESSION_ID: Initialization error.")
+        except Exception as e:
+            logging.error(f"SESSION_ID: Initialization error. {e}")
             print(Fore.RED+"SESSION_ID: Initialization error.")
             sys.exit()
-        
+            self.connection = None
+            self.cursor = None
         try:
             self.input_color = color_map.get(self.pers_cfg["CLI"]["input_color"], Fore.BLUE)
             self.logo_color = color_map.get(self.pers_cfg["CLI"]["logo_color"], Fore.GREEN)
             self.errors_color = color_map.get(self.pers_cfg["CLI"]["errors_color"], Fore.RED)
             self.startmenu_color = color_map.get(self.pers_cfg["CLI"]["start_menu_color"], Fore.WHITE)
             self.show_version=self.pers_cfg["CLI"]["show_version"]
+            self.checking_for_updates=self.pers_cfg["CLI"]["checking_for_updates"]
+            if self.checking_for_updates:
+                options = Options()
+                options.add_argument('--headless')
+                options.add_argument('--disable-dev-shm-usage')
+                options.add_argument('--no-sandbox')
+                driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+                driver.get("https://www.sxcomp.42web.io/p/SXServiseCLI/apip/getlastversionfree.html")
+                try:
+                    last_version = WebDriverWait(driver, 1).until(
+                        EC.presence_of_element_located((By.ID, "version"))
+                    ).text
+
+                except Exception as e:
+                    logging.error(f"Could not find the version on the page. Error: {e}")
+
+                finally:
+                    driver.quit()
+                    self.update_checking_status=last_version
+            else:
+                self.update_checking_status=None
+            
             logging.info("PERS_CONFIG: Initialization successful.")
-        except:
-            logging.error("PERS_CONFIG: Initialization error.")
-            print(Fore.RED+"PERS_CONFIG: Initialization error.")
-            sys.exit()    
+        except Exception as e:
+            logging.error(f"PERS_CONFIG: Initialization error: {e}")
+            self.update_checking_status=0
+            pass  
         
         if SXServiseCLI.check_internet(self)==True:
             logging.info("There is an Internet connection")
         elif SXServiseCLI.check_internet(self)==False:
             logging.warning("No internet connection.")
         
+        self.faker_core=SXSCLI_Faker()
+        logging.info(f"Initialization of the Faker core is successful. CORE VERSION: {self.faker_core.sxscli_version()}") 
         logging.info("Initialization successful.")
         
         try:
@@ -254,6 +312,10 @@ class SXServiseCLI:
         os.system('cls' if os.name == 'nt' else 'clear')
         print(self.logo_color+self.logo)
         print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+        
+        if self.checking_for_updates==True and self.app_version != self.update_checking_status:
+            print(Fore.YELLOW + " New version available: " + f"{self.app_version} -> "+self.update_checking_status)
+        
         logging.info("CLI: Successfully launched.")
         if self.user_cfg["fullname"]=="x" or self.user_cfg["nickname"]=="x" or self.user_cfg["mail"]=="x":
             print(self.startmenu_color+"")
@@ -266,6 +328,33 @@ class SXServiseCLI:
             np = Prompt.ask(Fore.WHITE + " - SXSCLI_AUTH: Would you like to ask for your password at startup? (Y/N):", default="Y")
             
             need_password = np.lower() == "y"
+            print("""
+Agreement to terms:
+1  - I give my consent to the storage and processing of my data.
+2  - I agree to: https://www.sxcomp.42web.io/p/SXServiseCLI/Acceptable_Use_Policy.txt
+3  - I agree to: https://www.sxcomp.42web.io/p/SXServiseCLI/Disclaimer_of_liability.txt
+4  - I agree to: https://www.sxcomp.42web.io/p/SXServiseCLI/Privacy_Policy.txt
+5  - I agree to: https://www.sxcomp.42web.io/p/SXServiseCLI/Terms_of_Use.txt
+6  - I agree to: https://www.sxcomp.42web.io/p/SXServiseCLI/Support_Policy.txt
+7  - I confirm that I am over 18 years old
+8  - I take full responsibility for my actions.
+9  - I confirm that I am using this software for lawful and ethical purposes only.
+10 - I agree to: https://www.sxcomp.42web.io/p/SXServiseCLI/Data_Retention_Policy.txt
+11 - I understand that this software is provided 'as-is' without warranty of any kind.
+12 - I acknowledge that misuse of this software may result in penalties or restriction of access.
+13 - I agree to regularly review all policy updates and changes.
+14 - I confirm that I have read and understand all of the above agreements and policies.
+If you agree to our rules, you can continue.""")
+
+            agreement = input(Fore.WHITE + " - Y or N: ")
+            if agreement.lower() == "yes" or "y":
+                pass
+            else:
+                print(Fore.RED+" -> You must agree to the terms to continue!")
+                logging.warning("CLI: You must agree to the terms to continue!")
+                time.sleep(4)
+                sys.exit()
+                
             self.save_user_data(full_name, nickname, email, password, need_password)
             print(" ")
             print(Fore.GREEN+"Registration is successful!")
@@ -296,13 +385,356 @@ class SXServiseCLI:
             SXServiseCLI.System.run_input(self)
     
     class System:
-        
+        class device:
+            def format_bytes(self,size):
+                for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+                    if size < 1024:
+                        return f"{size:.2f} {unit}"
+                    size /= 1024
+                return f"{size:.2f} TB"
+            
+            def start(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color + self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(" ")
+                console=self.console
+                
+                try:
+                    console.print(Panel("[bold cyan]System Information[/bold cyan]"))
+                    console.print(f"[white]OS:[/white] {platform.system()} {platform.release()} {platform.version()} {platform.platform()}")
+                    console.print(f"[white]Machine Name:[/white] {platform.node()}")
+                    console.print(f"[white]Processor:[/white] {platform.processor()}")
+                    console.print(f"[white]Architecture:[/white] {platform.architecture()}")
+                    console.print(f"[white]Python Version:[/white] {platform.python_version()}")
+                    console.print(f"[white]System Uptime:[/white] {psutil.boot_time()}")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]CPU Information[/bold cyan]"))
+                    console.print(f"[white]CPU Cores (Physical):[/white] {psutil.cpu_count(logical=False)}")
+                    console.print(f"[white]CPU Cores (Logical):[/white] {psutil.cpu_count(logical=True)}")
+                    console.print(f"[white]CPU Frequency:[/white] {psutil.cpu_freq().current} MHz")
+                    console.print(f"[white]CPU Usage:[/white] {psutil.cpu_percent(interval=1)}%")
+                except Exception:
+                    pass
+
+                try:
+                    mem = psutil.virtual_memory()
+                    console.print(Panel("[bold cyan]Memory Information[/bold cyan]"))
+                    console.print(f"[white]Total Memory:[/white] {SXServiseCLI.System.device.format_bytes(self,mem.total)}")
+                    console.print(f"[white]Available Memory:[/white] {SXServiseCLI.System.device.format_bytes(self,mem.available)}")
+                    console.print(f"[white]Used Memory:[/white] {SXServiseCLI.System.device.format_bytes(self,mem.used)}")
+                    console.print(f"[white]Memory Usage:[/white] {mem.percent}%")
+                except Exception:
+                    pass
+
+                try:
+                    swap = psutil.swap_memory()
+                    console.print(f"[white]Total Swap Memory:[/white] {SXServiseCLI.System.device.format_bytes(self,swap.total)}")
+                    console.print(f"[white]Used Swap Memory:[/white] {SXServiseCLI.System.device.format_bytes(self,swap.used)}")
+                    console.print(f"[white]Free Swap Memory:[/white] {SXServiseCLI.System.device.format_bytes(self,swap.free)}")
+                    console.print(f"[white]Swap Usage:[/white] {swap.percent}%")
+                except Exception:
+                    pass
+
+                try:
+                    gpus = GPUtil.getGPUs()
+                    if gpus:
+                        console.print(Panel("[bold cyan]GPU Information[/bold cyan]"))
+                        for gpu in gpus:
+                            console.print(f"[white]GPU:[/white] {gpu.name}, [white]Load:[/white] {gpu.load * 100:.2f}%, [white]Temp:[/white] {gpu.temperature} °C, [white]VRAM Total:[/white] {gpu.memoryTotal} MB, [white]VRAM Used:[/white] {gpu.memoryUsed} MB")
+                except Exception:
+                    pass
+
+                try:
+                    if hasattr(psutil, "sensors_temperatures"):
+                        console.print(Panel("[bold cyan]CPU Temperature[/bold cyan]"))
+                        for name, entries in psutil.sensors_temperatures().items():
+                            for entry in entries:
+                                console.print(f"[white]{name}:[/white] {entry.label} - {entry.current} °C")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]Disk Information[/bold cyan]"))
+                    for disk in psutil.disk_partitions():
+                        usage = psutil.disk_usage(disk.mountpoint)
+                        console.print(f"[white]Disk {disk.device} -[/white] Total: {SXServiseCLI.System.device.format_bytes(self,usage.total)}, Used: {SXServiseCLI.System.device.format_bytes(self,usage.used)}, Free: {SXServiseCLI.System.device.format_bytes(self,usage.free)}, Percent: {usage.percent}%")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]Network Information[/bold cyan]"))
+                    net_io = psutil.net_io_counters()
+                    console.print(f"[white]Bytes Sent:[/white] {SXServiseCLI.System.device.format_bytes(self,net_io.bytes_sent)}")
+                    console.print(f"[white]Bytes Received:[/white] {SXServiseCLI.System.device.format_bytes(self,net_io.bytes_recv)}")
+                except Exception:
+                    pass
+
+                try:
+                    hostname = socket.gethostname()
+                    local_ip = socket.gethostbyname(hostname)
+                    console.print(f"[white]Hostname:[/white] {hostname}")
+                    console.print(f"[white]Local IP Address:[/white] {local_ip}")
+                    console.print(f"[white]MAC Address:[/white] {':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0, 8 * 6, 8)][::-1])}")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]Running Processes[/bold cyan]"))
+                    for proc in psutil.process_iter(['pid', 'name', 'username', 'cpu_percent', 'memory_info']):
+                        try:
+                            console.print(f"[white]PID:[/white] {proc.info['pid']}, [white]Name:[/white] {proc.info['name']}, [white]User:[/white] {proc.info['username']}, [white]CPU:[/white] {proc.info['cpu_percent']}%, [white]Memory:[/white] {SXServiseCLI.System.device.format_bytes(self,proc.info['memory_info'].rss)}")
+                        except (psutil.NoSuchProcess, psutil.AccessDenied):
+                            pass
+                except Exception:
+                    pass
+                
+                try:
+                    if hasattr(psutil, "sensors_battery"):
+                        battery = psutil.sensors_battery()
+                        if battery:
+                            console.print(Panel("[bold cyan]Battery Information[/bold cyan]"))
+                            console.print(f"[white]Battery Percent:[/white] {battery.percent}%")
+                            console.print(f"[white]Plugged in:[/white] {'Yes' if battery.power_plugged else 'No'}")
+                            console.print(f"[white]Time left:[/white] {battery.secsleft // 60} minutes")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]Logged in Users[/bold cyan]"))
+                    for user in psutil.users():
+                        console.print(f"[white]User:[/white] {user.name}, [white]Terminal:[/white] {user.terminal}, [white]Host:[/white] {user.host}, [white]Started:[/white] {user.started}")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]Audio Devices[/bold cyan]"))
+                    import sounddevice as sd
+                    audio_devices = sd.query_devices()
+                    for device in audio_devices:
+                        console.print(f"[white]Device:[/white] {device['name']}, [white]Max Input Channels:[/white] {device['max_input_channels']}, [white]Max Output Channels:[/white] {device['max_output_channels']}")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]Network Interfaces[/bold cyan]"))
+                    interfaces = psutil.net_if_addrs()
+                    for interface_name, interface_addresses in interfaces.items():
+                        for addr in interface_addresses:
+                            console.print(f"[white]Interface:[/white] {interface_name}, [white]Address:[/white] {addr.address}, [white]Family:[/white] {addr.family}, [white]Netmask:[/white] {addr.netmask}")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]User Accounts[/bold cyan]"))
+                    users = psutil.users()
+                    for user in users:
+                        console.print(f"[white]User:[/white] {user.name}, [white]Terminal:[/white] {user.terminal}, [white]Host:[/white] {user.host}, [white]Started:[/white] {user.started}")
+                except Exception:
+                    pass
+
+                try:
+                    console.print(Panel("[bold cyan]System Boot Time[/bold cyan]"))
+                    console.print(f"[white]System Boot Time:[/white] {psutil.boot_time()}")
+                except Exception:
+                    pass
+                
+                
+                print(Fore.WHITE+"Thanks for using!")
+                print(Fore.WHITE+"Powered by SXServiseCLI")
+                print(" ")
+                SXServiseCLI.System.run_input(self)
+            
+            def run(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color + self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(" ")
+                print(Fore.WHITE + " Welcome to SXSCLI:Device!")
+                print(" ")
+                self.console.print(Panel("[bold cyan]Security Center[/bold cyan]"))
+                print(Fore.WHITE + f"""
+ This is the security center - a warning about dangerous actions.
+ WARNING! This function is quite dangerous. You assume all responsibility for its use. 
+ Sorry for the inconvenience, but unfortunately we have to ask you to agree to the terms before proceeding.
+
+ - Start scanning - 1
+ - Back - 0 or exit
+
+ If you enter an incorrect value, you will automatically go to the main menu.
+""")
+                x = input(Fore.WHITE + " & >>> ")
+                if x == "1":
+                    SXServiseCLI.System.device.start(self)
+                elif x == "0" or x.lower() == "exit":
+                    SXServiseCLI.System.run_input(self)
+                else:
+                    SXServiseCLI.System.run_input(self)
+
+                
+        class AI:
+            class genai_google:
+                def start_chat(self):
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(self.logo_color + self.logo)
+                    print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                    print(" ")
+                    print(Fore.WHITE + " Welcome to SXSCLI:AI:GENAI:Chat!")
+                    console=self.console
+                    with open(self.staff_path + "/genai.json", "r") as file:
+                        genai_data = json.load(file)
+                    print(Fore.WHITE + " -> To exit, say: exit")
+                    print(" ")
+                    try:
+                        print(Fore.GREEN + f"-> Connected to: {genai_data['api_key']} ({genai_data['model']})")
+                        console.print(Panel("[bold cyan]GEMINI[/bold cyan]"))
+                        print(" ")
+                        sxscli = SXSCLI_GENAI()
+                        settings_json = json.dumps({
+                            "model": genai_data['model'],
+                            "api_key": genai_data['api_key'],
+                            "temperature": 0.7,
+                            "max_tokens": 100,
+                            "type": "chat",
+                            "save_history": True,
+                            "personalized_responses": True,
+                            "user_name": self.user_cfg["nickname"],
+                            "full_name": self.user_cfg["fullname"]
+                        })
+                        sxscli.System(sxscli).config(settings_json)
+                        sxscli.start_chat()
+                        while True:
+                            user_input = input(Fore.LIGHTWHITE_EX + "You: ")
+                            if user_input.lower() == "exit":
+                                SXServiseCLI.System.run_input(self)
+                            response = sxscli.send_message(user_input)
+                            print(Fore.CYAN + f"AI: {response.text}")
+                    
+                    except Exception as e:
+                        print(Fore.RED + f"Error starting chat: {e}")
+                        logging.error(f"Component GENAI: Error starting chat: {e}")
+                        SXServiseCLI.System.run_input(self)
+
+                def cs_chat(self):
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(self.logo_color + self.logo)
+                    print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                    print(" ")
+                    print(Fore.WHITE + " Welcome to SXSCLI:AI:GENAI:New Settings!")
+                    m_model = Prompt.ask(Fore.WHITE + " - Enter model:", default=self.genai_def_settings["model"])
+                    m_api_key = Prompt.ask(Fore.WHITE + " - Enter API Key:")
+                    m_temp = Prompt.ask(Fore.WHITE + " - Enter temperature:", default=str(self.genai_def_settings["temperature"]))
+                    m_max_tokens = Prompt.ask(Fore.WHITE + " - Enter max tokens:", default=str(self.genai_def_settings["max_tokens"]))
+
+                    genai_data = {
+                        "model": m_model,
+                        "api_key": m_api_key,
+                        "temperature": float(m_temp),
+                        "max_tokens": int(m_max_tokens)
+                    }
+
+                    with open(self.staff_path + "/genai.json", "w") as file:
+                        json.dump(genai_data, file)
+
+                    print(Fore.GREEN + "Settings updated successfully!")
+                    SXServiseCLI.System.run_input(self)
+
+                def settings_chat(self):
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(self.logo_color + self.logo)
+                    print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                    print(" ")
+                    print(Fore.WHITE + " Welcome to SXSCLI:AI:GENAI:Settings!")
+                    console=self.console
+                    with open(self.staff_path + "/genai.json", "r") as file:
+                        genai_data = json.load(file)
+                    console.print(Panel("[bold cyan]Gemini settings[/bold cyan]"))
+                    print(" ")
+                    print(Fore.WHITE + 
+f""" GenAI, or Generative Artificial Intelligence, is a new generation of intelligent 
+ systems capable of generating content, from text and images to music and video, 
+ using complex algorithms and neural networks.
+ 
+ Information about the model:
+  - Model: {genai_data["model"]}
+  - API Key: {genai_data["api_key"]}
+  - Temperature: {genai_data["temperature"]}
+  - Max Tokens: {genai_data["max_tokens"]}
+            
+ Additional Functions:
+  - You do not have additional content.
+
+ Change settings - cs
+ Back - exit
+            """)
+                    action = input(Fore.BLUE + " GENAI >>> ").strip().lower()
+                    if action == "cs":
+                        SXServiseCLI.System.AI.genai_google.cs_chat(self)
+                    elif action == "exit":
+                        SXServiseCLI.System.run_input(self)
+                    else:
+                        print(Fore.RED + " -> Incorrect command")
+                        logging.error("Component GENAI: Incorrect command")
+                        SXServiseCLI.System.run_input(self)
+
+                def run(self):
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(self.logo_color + self.logo)
+                    print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                    print(" ")
+                    print(Fore.WHITE + " Welcome to SXSCLI:AI:GENAI!")
+
+                    filename = self.staff_path + "/genai.json"
+                    genai_data = {
+                        "model": self.genai_def_settings["model"],
+                        "api_key": "x",
+                        "temperature": self.genai_def_settings["temperature"],
+                        "max_tokens": self.genai_def_settings["max_tokens"]
+                    }
+                    
+                    if not os.path.isfile(filename):
+                        with open(filename, "w") as file:
+                            json.dump(genai_data, file)
+                            
+                    logging.info("Component GENAI: Successfully launched.")
+                    print(Fore.CYAN + "═══════════════════════════════════════════════════════════════════")
+                    print(Fore.WHITE + "                        GenAI: Generative AI                        ")
+                    print(Fore.CYAN + "═══════════════════════════════════════════════════════════════════")
+                    print(Fore.WHITE + """
+ GenAI, or Generative Artificial Intelligence, is a new generation 
+ of intelligent systems capable of generating content, from text 
+ and images to music and video, using complex algorithms and neural 
+ networks.
+
+ Commands: (BETA)
+   - Start a chat → start
+   - Settings     → st
+   - Exit         → exit
+                    """)
+                    print(Fore.CYAN + "═══════════════════════════════════════════════════════════════════")
+
+                    action = input(Fore.BLUE + " >>> ").strip().lower()
+                    if action == "start":
+                        SXServiseCLI.System.AI.genai_google.start_chat(self)
+                    elif action == "st":
+                        SXServiseCLI.System.AI.genai_google.settings_chat(self)
+                    elif action == "exit":
+                        SXServiseCLI.System.run_input(self)
+                    else:
+                        print(Fore.RED + "Invalid command.")
+                        logging.error("Component GENAI: Invalid command.")
+                        SXServiseCLI.System.run_input(self)
+                        
         def pers(self):
             os.system('cls' if os.name == 'nt' else 'clear')
             print(self.logo_color + self.logo)
             print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
             print(" ")
-
+            console=self.console
+            console.print(Panel("[bold cyan]Personalization[/bold cyan]"))
             print(f"""
             Personalization:
             - Logo color   -> {Fore.WHITE + self.pers_cfg["CLI"]["logo_color"]}
@@ -360,8 +792,10 @@ class SXServiseCLI:
             print(self.logo_color + self.logo)
             print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
             print(" ")
+            console=self.console
             print(Fore.WHITE + " Welcome to SXSCLI:CONFIG!")
             logging.info("Component CONFIG: Successfully launched.")
+            console.print(Panel("[bold cyan]Config[/bold cyan]"))
             tree = Tree("[blue]Your Current Configuration:", style="bold green")
             tree.box = box.SQUARE
             tree.add("[cyan]Addons Configuration: [white]{}".format(path_addons_cfg))
@@ -414,10 +848,11 @@ class SXServiseCLI:
                     result_file.close()
 
                 def portscan_sxscli(self, target_host):
+                    console=self.console
                     result_path_whois = f"Staff/results/{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}_portcan_result.log"
                     os.makedirs(os.path.dirname(result_path_whois), exist_ok=True)
                     os.system('cls' if os.name == 'nt' else 'clear')
-                    print(Fore.WHITE + " - - - - - - - - SXSCLI: PORTSCAN - - - - - - - - ")
+                    console.print(Panel("[bold cyan]Portscan[/bold cyan]"))
                     print(" ")
                     logging.info(f"Component PORTSCAN: Starting a port scan. Domain: {target_host}")
                     
@@ -456,9 +891,9 @@ class SXServiseCLI:
                     with open(result_path_whois, "w") as result_file:
                         result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - SXSCLI_WHOIS: Domain: {domain}\n")
                         result_file.flush()
-
+                        console=self.console
                         os.system('cls' if os.name == 'nt' else 'clear')
-                        print(Fore.WHITE + " - - - - - - - - SXSCLI: WHOIS - - - - - - - - ")
+                        console.print(Panel("[bold cyan]WHOIS[/bold cyan]"))
                         logging.info(f"Component WHOIS: Getting information about a domain: {domain}")
                         try:
                             domain_info = whois.whois(domain)
@@ -572,6 +1007,45 @@ class SXServiseCLI:
                         print(Fore.WHITE+" ")
                         SXServiseCLI.System.CyberSecurity.whois.whois_sxscli(self, domain)
 
+        class projects:
+            def create_new_project(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color+self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(" ")
+                print(Fore.WHITE+" Welcome to SXSCLI:PROJECTS!")
+                logging.info("Component PROJECTS: Successfully launched.")
+                
+                print(Fore.WHITE+"""
+Projects are a very interesting part of SXServiseCLI! 
+Here you can create your own project, register your application and 
+get a mini key to optimize the application. Note that certain restrictions apply to each key.
+
+ - Create a project - 1
+ - Back - 0 or exit
+""")
+                x = input(Fore.WHITE + " & >>> ")
+                if x == "1":
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(self.logo_color+self.logo)
+                    print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                    print(" ")
+                    print("Project information:")
+                    project_name = input(Fore.WHITE + " - Enter project name: ")
+                    project_description = input(Fore.WHITE + " - Enter project description: ")
+                    print("Your information:")
+                    full_name = input(Fore.WHITE + " - Enter your Full Name: ")
+                    phone_number = input(Fore.WHITE + " - Enter your Phone Number: ")
+                    email = input(Fore.WHITE + " - Enter your Email: ")
+                    date_of_birth = input(Fore.WHITE + " - Enter your Date of Birth (DD-MM-YYYY): ")
+                    print("BETA FUNC")
+                    SXServiseCLI.System.run_input(self)
+                    
+                    
+                    
+                elif x == "0" or x.lower() == "exit":
+                    SXServiseCLI.System.run_input(self)
+                
             
         def upgrade(self):
             os.system('cls' if os.name == 'nt' else 'clear')
@@ -624,13 +1098,29 @@ class SXServiseCLI:
  - - - - - - - - - - - - - - - - CYBER SECURITY - - - - - - - - - - - - - - - -      < - - - Dangerous* commands
    whois - Domain check
    pscan - Port scan
+   faker - Generate fake information (For registration, etc.)
+   netmon - Network monitoring
+   networkinfo - Obtaining detailed information about the network
  - - - - - - - - - - - - - - - - - - TOOLS - - - - - - - - - - - - - - - - - - -     < - - - Internal tools 
    ftp - File Transfer Protocol client (FTP)
    ssh - Secure Shell protocol client (SSH)
+   db - Database management system (DB)
    ping - Ping server (PING)
+   device - Device information 
+ - - - - - - - - - - - - - - Artificial intelligence - - - - - - - - - - - - - -     < - - - Additional* commands
+   genai - Chat with AI (Google AI Studio)
+   ai - Interface for launching artificial intelligence (Beta)
+ - - - - - - - - - - - - - - - - - - - Other - - - - - - - - - - - - - - - - - -    < - - - Global* commands
+   ip - Get your IP address
+   mac - Get your MAC address
+   clear - Clear the console
+   about - Software information
+   exit - Exit the application
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - Dangerous* - You take full responsibility for your actions
+  - Additional* - Half paid, half free features
   - Global* - System commands with CLI
+
  Copyright (c) 2023-2024 Kozosvyst Stas (StasX) 
 """)
             SXServiseCLI.System.run_input(self)
@@ -689,11 +1179,265 @@ f"""- - - - - - - - - - - - - - - -  User Info - - - - - - - - - - - - - - - - -
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 """)
             SXServiseCLI.System.run_input(self)
+        
+        class db:
+            def run(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color + self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(" ")
+                print(Fore.WHITE + " Welcome to SXSCLI:DB!")
+                logging.info("Component DB: Successfully launched.")
+                print("""
+        Please choose an option: (BETA)
+        
+        [0] Exit Database Manager
+        [1] Open existing database (.db file)  (SOON)
+        [2] Create a new SQLite database (.db file)
+        [3] Connect to an existing SQLite database
+        [4] Connect to MySQL database
+        """)
+                cmd_input = input(Fore.WHITE + " - Enter a command: ").strip().lower()
+                if int(cmd_input) == 0:
+                    SXServiseCLI.System.run_input(self)
+                elif int(cmd_input) == 1:
+                    print(Fore.RED + " - This feature is coming soon.")
+                    SXServiseCLI.System.run_input(self)
+                elif int(cmd_input) == 2:
+                    SXServiseCLI.System.db.create_sqlite_db(self)
+                elif int(cmd_input) == 3:
+                    SXServiseCLI.System.db.connect_sqlite_db(self)
+                elif int(cmd_input) == 4:
+                    SXServiseCLI.System.db.connect_mysql_db(self)
+                else:
+                    print(Fore.RED + " - Incorrect command.")
+                    logging.error("Component DB: Incorrect command.")
+                    SXServiseCLI.System.run_input(self)
+
+            def create_sqlite_db(self):
+                db_name = input(Fore.WHITE + " - Enter new SQLite database name: ").strip()
+                try:
+                    self.connection = sqlite3.connect(f"{db_name}.db")
+                    self.cursor = self.connection.cursor()
+                    print(Fore.GREEN + " - SQLite database created successfully!")
+                    logging.info(f"Component DB: SQLite database '{db_name}' created successfully.")
+                    SXServiseCLI.System.db.create_tables(self)
+                    self.connection.commit()
+
+                except sqlite3.Error as e:
+                    print(Fore.RED + f" - Failed to create database: {e}")
+                    logging.error(f"Component DB: Failed to create SQLite database '{db_name}'. Error: {e}")
+                finally:
+                    if self.connection:
+                        self.connection.close()
+                        print(Fore.YELLOW + " - Connection closed.")
+
+            def create_tables(self):
+                print(Fore.WHITE + " - Creating tables in the new database...")
+                table_name = input(Fore.WHITE + " - Enter table name: ").strip()
+                columns_input = input(Fore.WHITE + " - Enter column names and types (e.g., 'id INTEGER PRIMARY KEY, name TEXT'): ").strip()
+
+                create_table_query = f"CREATE TABLE IF NOT EXISTS {table_name} ({columns_input});"
+                try:
+                    self.cursor.execute(create_table_query)
+                    print(Fore.GREEN + f" - Table '{table_name}' created successfully!")
+                    logging.info(f"Component DB: Table '{table_name}' created successfully in the new SQLite database.")
+                except sqlite3.Error as e:
+                    print(Fore.RED + f" - Failed to create table: {e}")
+                    logging.error(f"Component DB: Failed to create table '{table_name}'. Error: {e}")
+                finally:
+                    SXServiseCLI.System.run_input(self)
+
+            def connect_sqlite_db(self):
+                db_name = input(Fore.WHITE + " - Enter the SQLite database name to connect: ").strip()
+                try:
+                    self.connection = sqlite3.connect(f"{db_name}.db")
+                    self.cursor = self.connection.cursor()
+                    print(Fore.GREEN + " - Connected to SQLite database successfully!")
+                    logging.info(f"Component DB: Connected to SQLite database '{db_name}' successfully.")
+                    SXServiseCLI.System.db.run_sql_commands(self)
+                except sqlite3.Error as e:
+                    print(Fore.RED + f" - Failed to connect to database: {e}")
+                    logging.error(f"Component DB: Failed to connect to SQLite database '{db_name}'. Error: {e}")
+                finally:
+                    if self.connection:
+                        self.connection.close()
+                        print(Fore.YELLOW + " - Connection closed.")
+                        SXServiseCLI.System.run_input(self)
+                    SXServiseCLI.System.run_input(self)
+
+            def run_sql_commands(self):
+                while True:
+                    print(Fore.WHITE + "\n - Enter an SQL command (type 'exit' to stop):")
+                    sql_command = input(Fore.WHITE + " SQL> ").strip()
+
+                    if sql_command.lower() == 'exit':
+                        print(Fore.YELLOW + " - Exiting SQL command interface...")
+                        break
+
+                    try:
+                        self.cursor.execute(sql_command)
+                        if sql_command.strip().lower().startswith('select'):
+                            rows = self.cursor.fetchall()
+                            for row in rows:
+                                print(row)
+                        else:
+                            self.connection.commit()
+                            print(Fore.GREEN + " - Command executed successfully!")
+                    except sqlite3.Error as e:
+                        print(Fore.RED + f" - Error executing command: {e}")
+                        logging.error(f"Component DB: Error executing command: {e}")
+                SXServiseCLI.System.run_input(self)
+
+            def connect_mysql_db(self):
+                host = input(Fore.WHITE + " - Enter MySQL host: ").strip()
+                user = input(Fore.WHITE + " - Enter MySQL username: ").strip()
+                password = input(Fore.WHITE + " - Enter MySQL password: ").strip()
+                database = input(Fore.WHITE + " - Enter MySQL database name: ").strip()
+
+                try:
+                    self.connection = mysql.connector.connect(
+                        host=host,
+                        user=user,
+                        password=password,
+                        database=database
+                    )
+                    self.cursor = self.connection.cursor()
+                    if self.connection.is_connected():
+                        print(Fore.GREEN + " - Connected to MySQL database successfully!")
+                        logging.info(f"Component DB: Connected to MySQL database '{database}' on host '{host}' successfully.")
+
+                        SXServiseCLI.System.db.run_mysql_commands()
+
+                except mysql.connector.Error as e:
+                    print(Fore.RED + f" - Failed to connect to MySQL database: {e}")
+                    logging.error(f"Component DB: Failed to connect to MySQL database '{database}' on host '{host}'. Error: {e}")
+                finally:
+                    if self.connection and self.connection.is_connected():
+                        self.connection.close()
+                        print(Fore.YELLOW + " - Connection closed.")
+                        SXServiseCLI.System.run_input(self)
+                    
+
+            def run_mysql_commands(self):
+                while True:
+                    print(Fore.WHITE + "\n - Enter an SQL command (type 'exit' to stop):")
+                    sql_command = input(Fore.WHITE + " SQL> ").strip()
+
+                    if sql_command.lower() == 'exit':
+                        print(Fore.YELLOW + " - Exiting SQL command interface...")
+                        break
+
+                    try:
+                        self.cursor.execute(sql_command)
+                        if sql_command.strip().lower().startswith('select'):
+                            rows = self.cursor.fetchall()
+                            for row in rows:
+                                print(row)
+                        else:
+                            self.connection.commit()
+                            print(Fore.GREEN + " - Command executed successfully!")
+                    except mysql.connector.Error as e:
+                        print(Fore.RED + f" - Error executing command: {e}")
+                        logging.error(f"Component DB: Error executing command: {e}")
+                    finally:
+                        SXServiseCLI.System.run_input(self)
+        
+        class netmon:
+            def netmon(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color+self.logo)
+                print(" ")
+                console=self.console
+                console.print("[bold green]Monitoring network activity. Press Ctrl+C to stop.[/bold green]")
+                try:
+                    while True:
+                        net_io = psutil.net_io_counters()
+                        console.print(f"\n[bold yellow]Total Bytes Sent:[/bold yellow] {net_io.bytes_sent / (1024 * 1024):.2f} MB")
+                        console.print(f"[bold yellow]Total Bytes Received:[/bold yellow] {net_io.bytes_recv / (1024 * 1024):.2f} MB")
+                        console.print(f"[bold yellow]Total Packets Sent:[/bold yellow] {net_io.packets_sent}")
+                        console.print(f"[bold yellow]Total Packets Received:[/bold yellow] {net_io.packets_recv}")
+
+                        console.print("\n[bold cyan]Network Adapters Status:[/bold cyan]")
+                        for adapter, stats in psutil.net_if_addrs().items():
+                            table = Table(show_header=True, header_style="bold magenta")
+                            table.add_column("Adapter", style="bold")
+                            table.add_column("Type", style="bold")
+                            table.add_column("Address", style="bold")
+                            for snic in stats:
+                                if snic.family == socket.AF_INET:
+                                    table.add_row(adapter, "IPv4", snic.address)
+                                elif snic.family == socket.AF_INET6:
+                                    table.add_row(adapter, "IPv6", snic.address)
+                                elif snic.family == psutil.AF_LINK:
+                                    table.add_row(adapter, "MAC", snic.address)
+                            console.print(table)
+
+
+                        console.print("\n[bold cyan]Active Network Connections:[/bold cyan]")
+                        table = Table(show_header=True, header_style="bold green")
+                        table.add_column("Local Address", style="bold")
+                        table.add_column("Remote Address", style="bold")
+                        table.add_column("Status", style="bold")
+                        for conn in psutil.net_connections(kind='inet'):
+                            laddr = conn.laddr
+                            raddr = conn.raddr
+                            status = conn.status
+                            table.add_row(f"{laddr.ip}:{laddr.port}", f"{raddr.ip if raddr else 'None'}:{raddr.port if raddr else 'None'}", status)
+                        console.print(table)
+
+                        console.print("\n[bold cyan]Network Process Activity:[/bold cyan]")
+                        table = Table(show_header=True, header_style="bold red")
+                        table.add_column("PID", style="bold")
+                        table.add_column("Process Name", style="bold")
+                        table.add_column("Local Address", style="bold")
+                        table.add_column("Remote Address", style="bold")
+                        for proc in psutil.process_iter(['pid', 'name']):
+                            try:
+                                connections = proc.connections(kind='inet')
+                                for conn in connections:
+                                    if conn.status == 'ESTABLISHED':
+                                        laddr = conn.laddr
+                                        raddr = conn.raddr
+                                        table.add_row(str(proc.info['pid']), proc.info['name'], f"{laddr.ip}:{laddr.port}", f"{raddr.ip if raddr else 'None'}:{raddr.port if raddr else 'None'}")
+                            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                                pass
+                        console.print(table)
+
+                        console.print("-" * 50)
+                        time.sleep(1)
+
+                except KeyboardInterrupt:
+                    console.print("\n[bold red]Network monitoring stopped.[/bold red]")
+                    SXServiseCLI.System.run_input(self)
             
+            def run(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color+self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(Fore.WHITE+" Welcome to SXSCLI:NETMON!")
+                logging.info("Component NETMON: Successfully launched.")
+                print("""
+ - Welcome to the Network Monitor!
+ 
+ This is a dangerous feature. If you continue, you will:
+  1. You take full responsibility for your actions.
+  2. You agree to all of our rules and policies. (Info on our website) """)
+                action = input(Fore.WHITE+" - Continue? (y/n): ").strip().lower()
+                if action == "y":
+                    print(Fore.WHITE+" ")
+                    SXServiseCLI.System.netmon.netmon(self)
+                else:
+                    SXServiseCLI.System.run_input(self)
+                
+                
+        
         class ping:
             def ping(self,host):
                 param = "-n" if platform.system().lower() == "windows" else "-c"
                 command = ["ping", param, "4", host]
+                console=self.console
+                console.print(Panel("[bold cyan]PING[/bold cyan]"))
                 try:
                     output = subprocess.check_output(command, stderr=subprocess.STDOUT, universal_newlines=True)
                     print(f"Ping to {host} was successful.")
@@ -724,6 +1468,123 @@ f"""- - - - - - - - - - - - - - - -  User Info - - - - - - - - - - - - - - - - -
                     print(Fore.WHITE+" ")
                     SXServiseCLI.System.ping.ping(self, host)
         
+        class faker:
+            def run(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color+self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(Fore.WHITE+" Welcome to SXSCLI:FAKER!")
+                logging.info("Component FAKER: Successfully launched.")
+                print(Fore.WHITE+"""
+ - Welcome to the Fake Identity Generator(PRE)! 
+ - Signing up somewhere that feels a bit sketchy? Generate a complete fake profile and keep your real information safe! 
+ - You take full responsibility for your actions. Conditions apply. (18+)
+ 
+What will we generate today?
+ - Exit                  - exit
+ - Fake credit card info - fakecard
+ - Fake human info       - fakehuman
+ - Fake email            - fakemail
+ - Fake address          - fakeaddress
+ - Fake phone number     - fakephone
+""")
+                action = input(Fore.WHITE+" >>> ").strip().lower()
+                if action == "exit":
+                    SXServiseCLI.System.run_input(self)
+                elif action == "fakecard":
+                    print(Fore.WHITE+"Fake credit card info: ")
+                    print(self.faker_core.generate_fake_card())
+                    print(Fore.WHITE+"Powered by SXServiseCLI")
+                    SXServiseCLI.System.run_input(self)
+                elif action == "fakehuman":
+                    print(Fore.WHITE+"Fake human info: ")
+                    print(self.faker_core.generate_fake_person())
+                    print(Fore.WHITE+"Powered by SXServiseCLI")
+                    SXServiseCLI.System.run_input(self)
+                elif action == "fakemail":
+                    print(Fore.WHITE+"Fake mail info: ")
+                    print(self.faker_core.generate_fake_email())
+                    print(Fore.WHITE+"Powered by SXServiseCLI")
+                    SXServiseCLI.System.run_input(self)
+                elif action == "fakeaddress":
+                    print(Fore.WHITE+"Fake address info: ")
+                    print(self.faker_core.generate_fake_address())
+                    print(Fore.WHITE+"Powered by SXServiseCLI")
+                    SXServiseCLI.System.run_input(self)
+                elif action == "fakephone":
+                    print(Fore.WHITE+"Fake phone number: ")
+                    print(self.faker_core.generate_fake_phone_number())
+                    print(Fore.WHITE+"Powered by SXServiseCLI")
+                    SXServiseCLI.System.run_input(self)
+                else:
+                    print(Fore.RED+" -> Sorry, Invalid action.")
+                    SXServiseCLI.System.run_input(self)
+        
+        def ai(self):
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(self.logo_color+self.logo)
+            print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+            print(Fore.WHITE+" Welcome to SXSCLI:AI!")
+            print(" ")
+            logging.info("Component AI: Successfully launched.")
+            print("Turn off: Ctrl+C")
+            while True:
+                try:
+                    from System.sxscli_web_core import AI_WITH_WEB_INTERFACE
+                    ai_interface = AI_WITH_WEB_INTERFACE()
+                    ai_interface.start()
+                except KeyboardInterrupt:
+                    print(Fore.YELLOW + " -> Exiting... (Ctrl+C detected)")
+                    break
+                except Exception as e:
+                    print(Fore.RED + " -> Sorry, AI interface failed to start.")
+                    logging.error(f"Component AI: AI interface failed to start. ERROR: {e}")
+                    SXServiseCLI.System.run_input(self)
+            SXServiseCLI.System.run_input(self)
+        
+        class networkinfo:
+            def run(self):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(self.logo_color+self.logo)
+                print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                print(Fore.WHITE+" Welcome to SXSCLI:NETINFO!")
+                print(Fore.WHITE+" ")
+                logging.info("Component NETINFO: Successfully launched.")
+                try:
+                    hostname = socket.gethostname()
+                    local_ip = socket.gethostbyname(hostname)
+                    interfaces = psutil.net_if_addrs()
+                    net_stats = psutil.net_if_stats()
+                    system_info = platform.system()
+                    system_version = platform.version()
+                    print(f"System Info: {system_info} {system_version}")
+                    print(f"Hostname: {hostname}")
+                    print(f"Local IP: {local_ip}")
+                    print("\nNetwork Interfaces:")
+                    if not interfaces:
+                        print("  No network interfaces found.")
+                    for interface, addrs in interfaces.items():
+                        print(f"\nInterface: {interface}")
+                        for addr in addrs:
+                            print(f"  - Address: {addr.address}")
+                            print(f"  - Netmask: {addr.netmask}")
+                            print(f"  - Broadcast: {addr.broadcast}")
+                        if interface in net_stats:
+                            stats = net_stats[interface]
+                            print(f"  - Is Up: {stats.isup}")
+                            print(f"  - Duplex: {stats.duplex}")
+                            print(f"  - Speed: {stats.speed} Mbps")
+                        else:
+                            print(f"  - No stats available for {interface}")
+                except socket.gaierror as e:
+                    print(f"Error: Unable to retrieve hostname or IP address. Details: {e}")
+                except psutil.NoSuchProcess as e:
+                    print(f"Error: Problem with network interfaces or process. Details: {e}")
+                except Exception as e:
+                    print(f"An unexpected error occurred: {e}")
+                finally:
+                    SXServiseCLI.System.run_input(self)
+        
         class ftp:
             def run(self):
                 result_path_ftp = f"Staff/results/{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}_ftp_result.log"
@@ -742,7 +1603,9 @@ f"""- - - - - - - - - - - - - - - -  User Info - - - - - - - - - - - - - - - - -
                         def connect_ftp(host, username, password):
                             ftp = FTP(host)
                             ftp.login(username, password)
+                            console=self.console
                             print(f"Successful connection to the FTP server")
+                            console.print(Panel("[bold cyan]FTP[/bold cyan]"))
                             result_file.write(f"{datetime.now().strftime('%d_%m_%Y_%H_%M')} - Successful connection to the FTP server. HOST: {ftp_host}\n")
                             result_file.flush()
                             logging.info(f"FTP: Successful connection to the FTP server. HOST: {ftp_host}")
@@ -795,6 +1658,17 @@ f"""- - - - - - - - - - - - - - - -  User Info - - - - - - - - - - - - - - - - -
                         result_file.close()
                         SXServiseCLI.System.run_input(self)
                     
+        def about(self):
+            print(Fore.WHITE+" About SXServiseCLI:")
+            print(Fore.WHITE+
+""" SXServiseCLI 2024 - is a powerful and versatile command-line tool that helps you 
+ run local services, generate JSON files, create QR codes, test APIs, SSH, FTP, 
+ and much more.
+
+ WIKI: https://github.com/StasX-Official/SXServiseCLI/wiki
+ GitHub: https://github.com/StasX-Official/SXServiseCLI
+""")
+            SXServiseCLI.System.run_input(self)
                  
         class ssh:
             def run(self):
@@ -805,19 +1679,21 @@ f"""- - - - - - - - - - - - - - - -  User Info - - - - - - - - - - - - - - - - -
                 print(Fore.WHITE+" Welcome to SXSCLI:SSH!") 
                 logging.info("Component SSH: Successfully launched.")
                 print(" ")
-                if str(input(Fore.WHITE+"Do you want to continue? (connect/exit) >>> ")).lower()=="exit":
+                if str(input(Fore.WHITE+"Do you want to continue? (connect/exit) >>> ")).lower()=="exit" or ssh_status==False:
                     SXServiseCLI.System.run_input(self)
                     
                 ssh_host = str(input(self.input_color+" - Enter SSH Host: "))
                 ssh_username = str(input(self.input_color+" - Enter SSH Username: "))
-                ssh_password = getpass(self.input_color+" - Enter SSH Password: ")
+                ssh_password = Prompt.ask(Fore.WHITE+" - Enter SSH Password: ", password=True)
 
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
                 try:
+                    console=self.console
                     ssh.connect(ssh_host, username=ssh_username, password=ssh_password)
                     print(Fore.LIGHTGREEN_EX+f"Successful connection to {ssh_host}\n")
+                    console.print(Panel("[bold cyan]SSH[/bold cyan]"))
                     logging.info(f"SSH: Successful connection to {ssh_host}")
 
                     while True:
@@ -1222,6 +2098,42 @@ f"""- - - - - - - - - - - - - - - -  User Info - - - - - - - - - - - - - - - - -
                     SXServiseCLI.System.upgrade(self)
                 elif command.lower() == "ping":
                     SXServiseCLI.System.ping.main(self)
+                elif command.lower() == "genai":
+                    SXServiseCLI.System.AI.genai_google.run(self)
+                elif command.lower() == "device":
+                    SXServiseCLI.System.device.run(self)
+                elif command.lower() == "faker":
+                    SXServiseCLI.System.faker.run(self)
+                elif command.lower() == "netmon":
+                    SXServiseCLI.System.netmon.run(self)
+                elif command.lower() == "ai":
+                    SXServiseCLI.System.ai(self)
+                elif command.lower() == "db":
+                    SXServiseCLI.System.db.run(self)
+                elif command.lower() == "networkinfo":
+                    SXServiseCLI.System.networkinfo.run(self)
+                elif command.lower() == "about":
+                    SXServiseCLI.System.about(self)
+                
+                elif command.lower() == "ip":
+                    local_ip=sxscli_core.System.Actions.get_local_ip(self=0)
+                    print(Fore.WHITE+f" - Your local IP: {local_ip}")
+                    public_ip=sxscli_core.System.Actions.get_public_ip(self=0)
+                    print(Fore.WHITE+f" - Your public IP: {public_ip}")
+                    SXServiseCLI.System.run_input(self)
+                
+                elif command.lower() == "clear":
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(self.logo_color+self.logo)
+                    print(self.startmenu_color + f"                                                                                             {self.app_version}\n" if self.show_version else "", end="")
+                    print(" ")
+                    SXServiseCLI.System.run_input(self)
+                
+                elif command.lower() == "mac":
+                    mac = sxscli_core.System.Actions.get_mac_address(self=0)
+                    print(Fore.WHITE+f" - Your MAC address: {mac}")
+                    SXServiseCLI.System.run_input(self)
+                
                 else:
                     print(self.errors_color+" - 404. Command not found. ")
                     logging.error(f"404. Command: {command} not found.")
@@ -1233,10 +2145,14 @@ f"""- - - - - - - - - - - - - - - -  User Info - - - - - - - - - - - - - - - - -
         
         def run_input(self):
             try:
-                cmd=input(self.input_color+" $ >>> ")
-                SXServiseCLI.System.run_command(self, command=cmd) 
-            except:
-                print(self.errors_color+" - Input command error. ")
-                logging.critical("Input command error")
+                if self.sxscli_completer_status:
+                    cmd = prompt(" $ >>> ", completer=self.completer)
+                    SXServiseCLI.System.run_command(self, command=cmd) 
+                else:
+                    cmd = input(f"{self.input_color} $ >>> ")
+                    SXServiseCLI.System.run_command(self, command=cmd) 
+            except Exception as e:
+                print(self.errors_color + " - Input command error. ")
+                logging.critical(f"Input command error: {e}")
                 time.sleep(5)
                 sys.exit()

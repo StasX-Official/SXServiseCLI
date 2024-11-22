@@ -1,9 +1,11 @@
 {
     "CLI": {
-        "logo_color": "PINK",
+        "logo_color": "GREEN",
         "input_color": "BLUE",
         "errors_color": "RED",
         "start_menu_color": "WHITE",
-        "show_version": true
+        "show_version": true,
+        "command_autocompletion": true,
+        "checking_for_updates": true
     }
 }

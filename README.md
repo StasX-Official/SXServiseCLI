@@ -4,10 +4,7 @@
 SHOP:
  - Buy PRO - https://ko-fi.com/s/64ee8881ee
  - Buy PLUS - https://ko-fi.com/s/dce39bdf69
- - Buy Student sub - https://ko-fi.com/stasx/tiers
- - Buy Home sub - https://ko-fi.com/stasx/tiers
- - Buy Business sub - https://ko-fi.com/stasx/tiers
- - Buy Unlimited sub - https://ko-fi.com/stasx/tiers
+ - Buy a subscription: https://ko-fi.com/stasx/tiers
    
 Key Features:
  - Local Server Management: Easily manage your local servers with simple commands.
@@ -26,13 +23,9 @@ System Requirements:
  - Required Dependencies: All necessary dependencies are included in the installation instructions.
     
 Instruction (Installation):
- - Click on the "Releases" tab.
- - Download the latest release.
- - Unzip the archive.
- - Open the file "first_start.cmd" (Windows) or "first_app_start.py" (Others).
- - Follow the instructions.
- - To open the application, use the file "run.cmd" (Windows) or "SXServiseCLI.py" (Others).
-  
+ - pip install -r requirements.txt
+ - python sxscli.py init
+   
 Usage Rules:
  - Allowed:
      - Installation.
