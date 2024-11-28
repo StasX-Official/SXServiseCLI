@@ -1,5 +1,10 @@
 **SXServiseCLI 2024 -  is a powerful and versatile command-line tool that helps you run local services, generate JSON files, create QR codes, test APIs, SSH, FTP, and much more.**
 -- 
+<a class="github-button" href="https://github.com/sponsors/StasX-Official" data-color-scheme="no-preference: light; light: light; dark: light_high_contrast;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @StasX-Official on GitHub">Sponsor</a> &
+<a class="github-button" href="https://github.com/StasX-Official" data-color-scheme="no-preference: light; light: light; dark: light_high_contrast;" data-size="large" aria-label="Follow @StasX-Official on GitHub">Follow @StasX-Official</a> &
+<a class="github-button" href="https://github.com/StasX-Official/SXServiseCLI/archive/HEAD.zip" data-color-scheme="no-preference: light; light: light; dark: light_high_contrast;" data-icon="octicon-download" data-size="large" aria-label="Download StasX-Official/SXServiseCLI on GitHub">Download</a> & 
+<a class="github-button" href="https://github.com/StasX-Official/SXServiseCLI/discussions" data-color-scheme="no-preference: light; light: light; dark: light_high_contrast;" data-icon="octicon-comment-discussion" data-size="large" aria-label="Discuss StasX-Official/SXServiseCLI on GitHub">Discuss</a> & 
+<a class="github-button" href="https://github.com/StasX-Official/SXServiseCLI" data-color-scheme="no-preference: light; light: light; dark: light_high_contrast;" data-icon="octicon-star" data-size="large" aria-label="Star StasX-Official/SXServiseCLI on GitHub">Star</a>
 
 SHOP:
  - Buy PRO - https://ko-fi.com/s/64ee8881ee
