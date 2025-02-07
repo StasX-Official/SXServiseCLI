@@ -56,4 +56,4 @@ If you have any questions or concerns about this Privacy Policy or our practices
 
 This Privacy Policy shall be governed by and construed in accordance with the laws of Ukraine, without regard to its conflict of law principles.
 
-© 2023-2024 StasX. All rights reserved.
+© 2023-2025 StasX. All rights reserved.

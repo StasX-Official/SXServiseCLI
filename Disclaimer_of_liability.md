@@ -47,4 +47,4 @@ This Disclaimer of Liability may be updated or modified from time to time. Any c
 or through other communication channels. It is your responsibility to review this Disclaimer periodically for any updates. 
 Continued use of SXServiseCLI after changes to this Disclaimer constitutes your acceptance of those changes.
 
-© 2023-2024 StasX. All rights reserved.
+© 2023-2025 StasX. All rights reserved.

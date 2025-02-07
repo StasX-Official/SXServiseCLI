@@ -61,4 +61,4 @@ conflict of law principles.
 
 For any questions or concerns regarding these Terms of Use, please contact us at: stax.official.xx@gmail.com.
 
-© 2023-2024 StasX. All rights reserved.
+© 2023-2025 StasX. All rights reserved.

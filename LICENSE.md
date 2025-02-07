@@ -1,6 +1,6 @@
 SOFTWARE LICENSE AGREEMENT
 
-Version: 2024.1
+Version: 2025.1
 
 This Software License Agreement ("Agreement") is granted by SXComp LLC ("Licensor") to the user ("Licensee") under the terms described below.
 
@@ -42,4 +42,4 @@ Thank you for choosing the "SXSERVISE CLI" software. We wish you success in usin
 
 Sincerely,
 StasX and SX.
-Date: January 1, 2024
+Date: January 1, 2025

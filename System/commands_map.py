@@ -21,6 +21,15 @@ commands_map = {
     "mac": "mac",
     "db": "db",
     "networkinfo": "networkinfo",
-    "about":"about"
+    "about":"about",
+    "qrcode":"qrcode",
+    "api":"api",
+    "speedtest":"speedtest",
+    "cpu":"cpu",
+    "gpu":"gpu",
+    "search":"search",
+    ".":".",
+    "status":"status",
+    "mediapipe":"mediapipe"
 }
-command_list=["ssh", "ftp", "init", "help", "info", "support", "pers", "config", "whois", "pscan", "ping", "upgrade", "genai", "device", "faker","netmon","ai","ip","clear","mac","db","networkinfo","about"]
+command_list=["ssh", "ftp", "init", "help", "info", "support", "pers", "config", "whois", "pscan", "ping", "upgrade", "genai", "device", "faker","netmon","ai","ip","clear","mac","db","networkinfo","about","qrcode", "api","speedtest","cpu","gpu", "search", ".", "status", "mediapipe"]

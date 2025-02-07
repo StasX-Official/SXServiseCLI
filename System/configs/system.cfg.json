@@ -1,6 +1,6 @@
 {
     "appName": "SXServiseCLI",
-    "version": "v6.7.2024",
+    "version": "v6.8.2024",
     "id": "SXSERVISECLIGLOBALFREE",
     "com": "github.sxservise.sxcomp.42web.io",
     "author": "StasX and SX",
@@ -17,5 +17,6 @@
     },
     "STAFF":{
         "path":"Staff"
-    }
+    },
+    "warnings":true
 }

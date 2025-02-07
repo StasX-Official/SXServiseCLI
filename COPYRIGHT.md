@@ -1,6 +1,6 @@
 Copyright Notice
 
-© 2023-2024 StasX. All rights reserved.
+© 2023-2025 StasX. All rights reserved.
 
 Software Title: SXServiseCLI
 

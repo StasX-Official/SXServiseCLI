@@ -31,5 +31,5 @@ Contact us to order:
   - You agree to the fact that we will store and process your data.
   - You agree that the rules are subject to change.
 
-@2021-2024, SX and StasX. All rights reserved.
+@2021-2025, SX and StasX. All rights reserved.
 This page was last updated: 14.07.2024
