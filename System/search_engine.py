@@ -1,4 +1,23 @@
 import requests
+import wikipedia
+
+def search_wikipedia(prompt):
+    try:
+        wikipedia.set_lang("en")
+        page = wikipedia.page(prompt)
+        summary = page.summary[:500]
+        formatted_summary = "\n".join(summary[i:i+100] for i in range(0, len(summary), 100))
+        return f"""
+ {formatted_summary}
+ 
+ Continue reading at: {page.url} (By Wikipedia API)
+ """
+    except wikipedia.exceptions.DisambiguationError as e:
+        return f" Multiple results found: {', '.join(e.options[:5])}..."
+    except wikipedia.exceptions.PageError:
+        return """ 
+ Page not found.
+    """
 
 class Search:
     def __init__(self, data):
