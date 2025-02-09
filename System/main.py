@@ -41,7 +41,7 @@ from System.genai_core import SXSCLI_GENAI
 from System.faker_core import SXSCLI_Faker
 from System.project_core import SXSCLI_Project
 from System.sxscli_web_core import AI_WITH_WEB_INTERFACE
-from System.search_engine import Search
+from System.search_engine import Search, search_wikipedia
 from System.sxscli_core import System
 
 try:
@@ -55,7 +55,7 @@ SXSCLICS=System()
 firebase_client = SXSCLICS.sxscli.Firebase.Client.Auth(SXSCLICS)
 
 class SXServiseCLI:
-    def __init__(self, other):
+    def __init__(self, other,admin_rights):
         self.start_start_time_deb = time.time()
         self.console = Console()
         
@@ -160,6 +160,11 @@ class SXServiseCLI:
             )
         
         self.search_engine=Search(search_settings)
+        
+        if admin_rights:
+            logging.info("SXSCLI: Admin rights are available.")
+        else: 
+            logging.info("SXSCLI: Admin rights are not available.")
         
         logging.info("Initialization started.")
         try:
@@ -2345,6 +2350,7 @@ Available Actions:
    mediapipe - Try AI using your camera
    playground - Playground for developers (SOON)
    create - Create a new AI (SOON)
+   assistant or asist - AI Assistant (SOON)
  - - - - - - - - - - - - - - - - - - PLATFORMS - - - - - - - - - - - - - - - - - -   < - - - Additional* commands
    build - Manage your projects (SOON)
    learn - Learn programming languages (SOON)
@@ -2357,7 +2363,8 @@ Available Actions:
    clear - Clear the console
    speedtest - Check the speed of the Internet connection
    exit - Exit the application
-   . - Clear logs
+   . - Clear all system logs
+   wikipedia or wiki - A quick Wikipedia search
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   < - - - What is this?
   SXServiseCLI 2024 - is a powerful and versatile command-line tool 
   that helps you run local services, generate JSON files, create QR codes, 
@@ -3798,7 +3805,34 @@ f"""
                         SXServiseCLI.System.run_input(self)
 
                 elif re.match(r"^search (.*)", command.lower()):
-                    SXServiseCLI.System.Search(self, promt=re.match(r"^search (.*)", command.lower()).group(1).capitalize())
+                    if re.match(r"^search$", command.lower()):
+                        print(Fore.WHITE+"""
+ How to use:
+ - search [search query] - Search in the system
+""")
+                        SXServiseCLI.System.run_input(self)
+                    else:
+                        SXServiseCLI.System.Search(self, promt=re.match(r"^search (.*)", command.lower()).group(1).capitalize())
+                        SXServiseCLI.System.run_input(self)
+                
+                elif re.match(r"^(wiki|wikipedia)(.*)", command.lower()):
+                    if re.match(r"^(wiki|wikipedia)$", command.lower()):
+                        print(Fore.WHITE+"""
+ How to use:
+  - wiki [search query] - Search Wikipedia
+""")
+                        SXServiseCLI.System.run_input(self)
+                    else:
+                        x = re.match(r'^(wiki|wikipedia)(.*)', command.lower()).group(2).strip()
+                        print(Fore.WHITE + search_wikipedia(prompt=x))
+                        logging.info(f"Search Wikipedia: {x}")
+                        SXServiseCLI.System.run_input(self)
+                
+                elif command.lower() == "cli":
+                    print(Fore.WHITE+f"""
+ CLI: {self.app_name} - {self.app_version} - {self.author}
+""")
+                    SXServiseCLI.System.run_input(self)
                 
                 else:
                     print(self.errors_color+" - 404. Command not found. Command list: help")
@@ -3813,9 +3847,11 @@ f"""
             try:
                 if self.sxscli_completer_status:
                     cmd = prompt(" $ >>> ", completer=self.completer)
+                    logging.info(f"Input command: {cmd}")
                     SXServiseCLI.System.run_command(self, command=cmd) 
                 else:
                     cmd = input(f"{self.input_color} $ >>> ")
+                    logging.info(f"Input command: {cmd}")
                     SXServiseCLI.System.run_command(self, command=cmd) 
             except Exception as e:
                 print(self.errors_color + " - Input command error. ")
