@@ -3577,7 +3577,7 @@ f"""
                 ssh_username = SXServiseCLI.System.SSH._get_user_input(self.input_color + " - Enter SSH Username: ")
                 ssh_password = input(Fore.WHITE + " - Enter SSH Password: ")
                 ssh = paramiko.SSHClient()
-                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.set_missing_host_key_policy(paramiko.RejectPolicy())
 
                 try:
                     ssh.connect(ssh_host, username=ssh_username, password=ssh_password)
