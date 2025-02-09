@@ -57,4 +57,5 @@ etc.
 By participating in this project, you agree to uphold our code of conduct. Please read it before contributing.
 
 Thank you for your contributions and for making SXServiseCLI better!
-StasX and SX.
+StasX.
+© 2023-2024 StasX. All rights reserved.
