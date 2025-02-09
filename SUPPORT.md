@@ -31,3 +31,4 @@ Thank you for using SXServiseCLI 2024!
 
 **Thank You!**
  - Thank you for being a part of the SXServiseCLI 2024 community. We appreciate your support and look forward to your feedback to continue improving the project.
+© 2023-2024 StasX. All rights reserved.
